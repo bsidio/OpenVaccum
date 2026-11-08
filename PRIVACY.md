@@ -25,9 +25,9 @@ Deleting the app removes its settings. You can also remove a saved robot in Sett
 
 ## Camera and obstacle photos
 
-If you have turned on camera streaming on your robot yourself, the app can show the live video. The app can't turn the camera on. Video is decoded and shown on your iPhone. It is never recorded, saved or sent anywhere.
+If you have turned on camera streaming on your robot yourself, the app can show the live video. The app can't turn the camera on. Video is decoded and shown on your iPhone. It is never recorded, saved or sent anywhere. If you turn on Identify What's in View, the app checks a frame every few seconds with Apple's Vision framework on your iPhone to name what the camera sees.
 
-Obstacle photos are downloaded from your robot so you can see them. When the robot couldn't name an object, the app uses Apple's Vision framework on your iPhone to pick a label. Photos are kept in memory only, are not saved on your iPhone, and are never uploaded.
+Obstacle photos are downloaded from your robot so you can see them. When you open one, the app checks it with Apple's Vision framework on your iPhone to name the object and to notice people or pets in it. Photos are kept in memory only, are not saved on your iPhone, and are never uploaded.
 
 ## Security
 

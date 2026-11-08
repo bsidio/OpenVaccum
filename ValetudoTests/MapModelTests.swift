@@ -441,12 +441,12 @@ final class RobotListTests: XCTestCase {
     func testForgettingOneRobotKeepsTheOthersAndTheirAddresses() {
         Connection(baseURL: "http://a.lan", username: nil).save()
         Connection(baseURL: "http://b.lan", username: nil).save()
-        Connection.setFallback("http://10.0.0.5", for: "http://a.lan")
-        Connection.setFallback("http://10.0.0.6", for: "http://b.lan")
+        Connection.setFallback("http://192.0.2.5", for: "http://a.lan")
+        Connection.setFallback("http://192.0.2.6", for: "http://b.lan")
         RobotList.forget("http://a.lan")
         XCTAssertEqual(RobotList.all().map(\.id), ["http://b.lan"])
         XCTAssertNil(Connection.fallback(for: "http://a.lan"))
-        XCTAssertEqual(Connection.fallback(for: "http://b.lan"), "http://10.0.0.6")
+        XCTAssertEqual(Connection.fallback(for: "http://b.lan"), "http://192.0.2.6")
     }
 
     func testTheRobotFromBeforeTheListIsKept() {
