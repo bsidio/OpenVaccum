@@ -85,6 +85,10 @@ This app isn't part of the Valetudo project, so please report problems with it i
 
 - iPad layouts. The app runs on iPhone.
 
+## License
+
+OpenVacuum is open source under the [MIT License](LICENSE). Parts that come from other projects keep their own licenses, listed under Credits.
+
 ## Credits
 
 Built on [Valetudo](https://github.com/Hypfer/Valetudo) by Sören Beye. Achievement names and descriptions come from Valetudo, Copyright 2018 Sören Beye, under the Apache License 2.0. A copy of that license is in `Valetudo/Valetudo-License.txt` and in the app. Video decoding uses [pl_mpeg](https://github.com/phoboslab/pl_mpeg) by Dominic Szablewski, under the MIT license below. The same notice is in the app, under **Settings > About**.
