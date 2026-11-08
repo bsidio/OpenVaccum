@@ -4,6 +4,20 @@ A native iPhone app for robot vacuums running [Valetudo](https://valetudo.cloud)
 
 This is an unofficial app. It isn't affiliated with or endorsed by the Valetudo project.
 
+<p align="center">
+  <img src="docs/screenshots/live.png" width="200" alt="Home, with the robot cleaning the kitchen on a live floor plan">
+  <img src="docs/screenshots/3d.png" width="200" alt="The same floor plan as a 3D model">
+  <img src="docs/screenshots/rooms.png" width="200" alt="Three rooms picked in cleaning order">
+  <img src="docs/screenshots/controls.png" width="200" alt="Controls for mode, cleaning route, suction and the dock">
+</p>
+<p align="center">
+  <img src="docs/screenshots/editor.png" width="200" alt="The floor plan editor">
+  <img src="docs/screenshots/schedule.png" width="200" alt="Cleaning routines on the Schedule tab">
+  <img src="docs/screenshots/care.png" width="200" alt="Parts and maintenance on the Care tab">
+</p>
+
+The screenshots use Valetudo's public sample map.
+
 ## What it does
 
 - **Set up a new robot:** join a robot that isn't on Wi-Fi yet to your network, as Valetudo's own setup page does.
