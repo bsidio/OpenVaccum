@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build and test
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Show Xcode
+        run: xcodebuild -version
+
+      - name: Pick a simulator
+        id: sim
+        run: |
+          # The newest iOS runtime's first iPhone, so the job doesn't depend on one device name.
+          udid=$(xcrun simctl list devices available --json | python3 -c '
+          import json, sys
+          devices = json.load(sys.stdin)["devices"]
+          ios = sorted((k for k in devices if ".iOS-" in k),
+                       key=lambda k: [int(p) for p in k.rsplit("iOS-", 1)[1].split("-")])
+          for runtime in reversed(ios):
+              phones = [d for d in devices[runtime] if d["name"].startswith("iPhone")]
+              if phones:
+                  print(phones[0]["udid"]); break
+          ')
+          test -n "$udid" || { echo "No iPhone simulator found"; xcrun simctl list devices available; exit 1; }
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+
+      - name: Test
+        run: |
+          mkdir -p build
+          set +e
+          xcodebuild test \
+            -project OpenVacuum.xcodeproj \
+            -scheme OpenVacuum \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build \
+            -resultBundlePath build/Tests.xcresult \
+            CODE_SIGNING_ALLOWED=NO > build/test.log 2>&1
+          status=$?
+          grep -E "error:|Test Case .* failed|Executed [0-9]+ tests|\*\* TEST " build/test.log
+          exit $status
+
+      - name: Build for a device
+        run: |
+          set +e
+          xcodebuild build \
+            -project OpenVacuum.xcodeproj \
+            -scheme OpenVacuum \
+            -destination "generic/platform=iOS" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO > build/device.log 2>&1
+          status=$?
+          grep -E "error:|\*\* BUILD " build/device.log
+          exit $status
+
+      - name: Keep the test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            build/Tests.xcresult
+            build/*.log
+          retention-days: 7

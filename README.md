@@ -1,5 +1,7 @@
 # OpenVacuum
 
+[![CI](https://github.com/bsidio/OpenVaccum/actions/workflows/ci.yml/badge.svg)](https://github.com/bsidio/OpenVaccum/actions/workflows/ci.yml)
+
 A native iPhone app for robot vacuums running [Valetudo](https://valetudo.cloud). It talks directly to your robot over your home network, with no cloud service, account or tracking.
 
 This is an unofficial app. It isn't affiliated with or endorsed by the Valetudo project.
