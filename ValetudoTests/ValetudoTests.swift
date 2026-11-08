@@ -1,7 +1,7 @@
 import ObjectiveC
 import SwiftUI
 import XCTest
-@testable import Valetudo
+@testable import OpenVacuum
 
 final class ValetudoTests: XCTestCase {
     func testAddressesAreNormalized() {

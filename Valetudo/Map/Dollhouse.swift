@@ -11,6 +11,7 @@ struct DollhouseView: View {
     var active = false
     /// Keeps the rooms of an unfinished job marked, though the robot isn't moving.
     var paused = false
+    var trailStyle = PlanCanvas.TrailStyle.band
     var bottomInset: CGFloat = 0
     /// Raises the reset button, to clear anything floating above the bottom inset.
     var resetLift: CGFloat = 0
@@ -25,7 +26,7 @@ struct DollhouseView: View {
     var body: some View {
         GeometryReader { geo in
             DollhouseScene(plan: plan, picked: picked, numbered: numbered, active: active, paused: paused,
-                           scheme: scheme, reduceMotion: reduceMotion,
+                           trailStyle: trailStyle, scheme: scheme, reduceMotion: reduceMotion,
                            size: CGSize(width: geo.size.width, height: max(1, geo.size.height - bottomInset)),
                            resets: resets, onMoved: { moved = $0 }, onRoom: onRoom, onObstacle: onObstacle)
                 .frame(height: max(1, geo.size.height - bottomInset))
@@ -68,6 +69,7 @@ private struct DollhouseScene: UIViewRepresentable {
     let numbered: Bool
     let active: Bool
     let paused: Bool
+    let trailStyle: PlanCanvas.TrailStyle
     let scheme: ColorScheme
     let reduceMotion: Bool
     let size: CGSize
@@ -90,7 +92,7 @@ private struct DollhouseScene: UIViewRepresentable {
         model.onObstacle = onObstacle
         model.onMoved = onMoved
         model.show(plan, picked: picked, numbered: numbered, active: active, paused: paused,
-                   scheme: scheme, reduceMotion: reduceMotion, size: size)
+                   trailStyle: trailStyle, scheme: scheme, reduceMotion: reduceMotion, size: size)
         model.reset(to: resets)
     }
 
@@ -195,6 +197,7 @@ private final class DollhouseModel: NSObject {
     private var numbered = true
     private var active = false
     private var paused = false
+    private var trailStyle = PlanCanvas.TrailStyle.band
     /// Whether a job's rooms are marked. The robot's own pulse only follows `active`.
     private var inJob: Bool { active || paused }
     private var builtWalls: Path?
@@ -222,6 +225,7 @@ private final class DollhouseModel: NSObject {
 
     private struct SurfaceKey: Equatable {
         let trail: Path
+        let trailStyle: PlanCanvas.TrailStyle
         let picked: [String]
         let active: Bool
         let rooms: [String]
@@ -313,13 +317,14 @@ private final class DollhouseModel: NSObject {
     // MARK: Updating
 
     func show(_ plan: FloorPlan, picked: [String], numbered: Bool, active: Bool, paused: Bool,
-              scheme: ColorScheme, reduceMotion: Bool, size: CGSize) {
+              trailStyle: PlanCanvas.TrailStyle, scheme: ColorScheme, reduceMotion: Bool, size: CGSize) {
         let restyled = scheme != self.scheme
         self.plan = plan
         self.picked = picked
         self.numbered = numbered
         self.active = active
         self.paused = paused
+        self.trailStyle = trailStyle
         self.scheme = scheme
         self.reduceMotion = reduceMotion
         if size != self.size {
@@ -441,7 +446,7 @@ private final class DollhouseModel: NSObject {
     }
 
     private func paintSurface(_ plan: FloorPlan, picked: [String], active: Bool, colors: DollhouseColors) {
-        let key = SurfaceKey(trail: plan.trail, picked: picked, active: active,
+        let key = SurfaceKey(trail: plan.trail, trailStyle: trailStyle, picked: picked, active: active,
                              rooms: plan.rooms.filter(\.active).map(\.id), scheme: scheme,
                              structures: [plan.carpets, plan.noGo, plan.noMop, plan.virtualWalls, plan.activeZones]
                                  + plan.annotations.map(\.path),
@@ -454,7 +459,7 @@ private final class DollhouseModel: NSObject {
         let scale = longest / max(plan.bounds.width, plan.bounds.height)
         let size = CGSize(width: plan.bounds.width * scale, height: plan.bounds.height * scale)
         let renderer = ImageRenderer(content:
-            FloorSurface(plan: plan, picked: Set(picked), active: active, outline: outline)
+            FloorSurface(plan: plan, picked: Set(picked), active: active, trailStyle: trailStyle, outline: outline)
                 .frame(width: size.width, height: size.height)
                 .environment(\.colorScheme, scheme))
         renderer.scale = 1
@@ -529,7 +534,7 @@ private final class DollhouseModel: NSObject {
         }
         // While the robot sits on its dock, the badge would only hide it.
         if let dock = plan.dock, !plan.isDocked {
-            let node = billboard(picture(MarkerBadge(symbol: "bolt.fill", fill: Theme.floor, ink: Theme.wall)),
+            let node = billboard(picture(MarkerBadge(symbol: DockGlyph.symbolName, fill: Theme.floor, ink: Theme.wall)),
                                  name: "dock", at: place(dock, height: 0.45), order: 140)
             markers.addChildNode(node)
         }
@@ -825,6 +830,7 @@ private struct FloorSurface: View {
     let plan: FloorPlan
     let picked: Set<String>
     let active: Bool
+    let trailStyle: PlanCanvas.TrailStyle
     /// The edge of the model. Floors are grown to run under the walls, and this stops them there.
     let outline: Path
 
@@ -866,8 +872,8 @@ private struct FloorSurface: View {
             let phoneSize = PlanTransform(bounds: plan.bounds, size: CGSize(width: size.width / 5, height: size.height / 5))
 
             PlanCanvas.drawCarpets(of: plan, in: phone, phoneSize)
-            map.stroke(plan.trail, with: .color(Theme.cobalt.opacity(0.22)),
-                       style: StrokeStyle(lineWidth: 30 / plan.pixelSize, lineCap: .round, lineJoin: .round))
+            PlanCanvas.drawTrail(of: plan, style: trailStyle, in: map, pointSize: 5 / t.scale,
+                                 strong: context.environment.colorSchemeContrast == .increased)
             PlanCanvas.drawStructures(of: plan, in: phone, phoneSize, showsTarget: false)
         }
     }
@@ -904,7 +910,7 @@ private struct MarkerBadge: View {
     let ink: Color
 
     var body: some View {
-        Image(systemName: symbol)
+        AppSymbol(name: symbol)
             .font(.system(size: 11, weight: .bold))
             .foregroundStyle(ink)
             .frame(width: 22, height: 22)
@@ -921,7 +927,7 @@ extension DollhouseModel: UIGestureRecognizerDelegate {
     }
 }
 
-private extension FloorPlan {
+extension FloorPlan {
     var isDocked: Bool {
         guard let robot, let dock else { return false }
         return hypot(robot.x - dock.x, robot.y - dock.y) * pixelSize < 60

@@ -1,0 +1,663 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00821C719DD186BB2A552BDD /* WifiSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4787598F3B3CE05E3BAC83C0 /* WifiSetupView.swift */; };
+		06C207F5C08193241972D8BE /* ConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31B64E7A3D2E8164A6E64B9 /* ConnectView.swift */; };
+		168F6227AB540BBF833C4F62 /* ShapeEditing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2553CFB55944F841273E7D51 /* ShapeEditing.swift */; };
+		1726732FD46266C7E24E9861 /* Sheets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B118D84364206C0C733C1B /* Sheets.swift */; };
+		181A29131A34115783127EF7 /* ScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38C8B0CF00FBBE12D13CB7C7 /* ScheduleView.swift */; };
+		19B57F0B567F493E329DD903 /* JobRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F56393699623062E04220023 /* JobRequest.swift */; };
+		19D9773412EDE7D647646A45 /* ConnectivitySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B77532AEB67153C99A05B1A9 /* ConnectivitySettings.swift */; };
+		1C3272A96918BE3A03188DF8 /* CoverageMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04FC887C95029C0AC79C6464 /* CoverageMapView.swift */; };
+		1C97A0F4608931489D311520 /* RobotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92706A8C62CB65C7BD0CF4A1 /* RobotStore.swift */; };
+		1DE52CC8D1E1AB6DAE29F3C7 /* MapModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C728EEE50341B76000E2B034 /* MapModelTests.swift */; };
+		1FA34D80602DDB48615274A7 /* PlanMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EAD020955001EA6A3245AC /* PlanMask.swift */; };
+		1FE805D4304B90CD128151CE /* Picks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C46B56C49D36CC0EE58F157 /* Picks.swift */; };
+		22C2087211BB5B46638EA783 /* ValetudoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C74621D24F80648E99FAACF6 /* ValetudoApp.swift */; };
+		2AB90C3D4277B24B65B7ACAE /* CareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13B7B4EE2CB773F660EA6AEF /* CareView.swift */; };
+		2BF04D9201F985362FA1FCEF /* StoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC949F095E1F4B7476C4A42 /* StoreTests.swift */; };
+		32F27740A5E2B17D96CE35ED /* PlanChildren.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CED594102E6597BABB11B0F /* PlanChildren.swift */; };
+		33DB189A4E7E40DDA1A08BAB /* PlanColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFD1F46DCBA1DB7C07DAFEEC /* PlanColumn.swift */; };
+		356363B52DD46115512F8E5D /* FloorPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC35A7806AD747A63897EC2 /* FloorPlan.swift */; };
+		442C37CAF9861523B4375CC3 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62E4AF899322ACEB35B3CD1 /* Client.swift */; };
+		4AA6ABFD1CD84E69B236C3ED /* Valetudo-License.txt in Resources */ = {isa = PBXBuildFile; fileRef = BE1E5A0949ED51ED85623CC7 /* Valetudo-License.txt */; };
+		4C72186B03DEE2471891A4F4 /* SettingsKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33AD74CBD5CC720B1E53FAC4 /* SettingsKit.swift */; };
+		517F5C742AA0BAC8D6188DD3 /* SignInSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 994435D1D4DEA436F920DDA6 /* SignInSheet.swift */; };
+		529D2B08CB597A55F3150BD7 /* PlanTouches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C03ED50E60A86D048E7A20C /* PlanTouches.swift */; };
+		53A0342FFB3CCACB917F6CB0 /* PickLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB65A1C1AE3A072F683F2209 /* PickLayer.swift */; };
+		54BE17FC9DBA8618FB7C2B3B /* PlanDrawingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 560B80D843DB70D23F692C1D /* PlanDrawingTests.swift */; };
+		5527DCD096203E5CE9231756 /* ObstacleSpotter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0494EBDB2A91114829B027F /* ObstacleSpotter.swift */; };
+		55B4318FC4B053C746FDF8F0 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811AB2ACBB0C905769360C61 /* Models.swift */; };
+		55D9D94EFC2483BB71C02CF4 /* HomeTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA40688E3C020F779CB565FF /* HomeTips.swift */; };
+		5FA63799C2D661B5EAF9BA34 /* ConnectSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55948CAB416DB5C769192257 /* ConnectSheet.swift */; };
+		60E688ECF50689E52C49237B /* SettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2F0E7F81B88C971DD4FE22 /* SettingsViews.swift */; };
+		627124171C833E467DD3B2EE /* FloorPlanHelp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C4D6FE1D0B9D5B8BE37EF7 /* FloorPlanHelp.swift */; };
+		62AB5949D601CB82214FB80E /* CameraStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = B668A21A934ADAB161865B2D /* CameraStream.swift */; };
+		64DBAB5388CFFF806283A55C /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F4C39013AE2A89AA8D4AEE /* Connection.swift */; };
+		66598FFB31531A681B14846C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7B7DC61F1BCE9878CB39DA0 /* Assets.xcassets */; };
+		68C66BF0F83759BF1EA61F75 /* RoomsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791BE13499F7CF8C1F73290A /* RoomsSheet.swift */; };
+		693A8DC4FC774643B93B7BAE /* MapEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07C1AEF2B658E9A2C96484C0 /* MapEditorView.swift */; };
+		6FBAC919D40F3DD50A6760B8 /* DockGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5182178746233A365E171E5B /* DockGlyph.swift */; };
+		712925AD3E52C232C3D3CD24 /* pl_mpeg.c in Sources */ = {isa = PBXBuildFile; fileRef = A7073CA797C04AC67ED647BF /* pl_mpeg.c */; };
+		789C514FB70661CA123BD1A7 /* Dollhouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 320BC1DBC023D974063886A1 /* Dollhouse.swift */; };
+		7BE8972DE006B96050D601D7 /* HomeBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75465F12E653B47E834ED9A /* HomeBar.swift */; };
+		88E2D7D10D5D03FA44F1ADDD /* SystemSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89455E1E10B0594F43BA65C8 /* SystemSettings.swift */; };
+		8CAEF253314505F90FE8A0E2 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05E345F8518B2640CF20CB9 /* DesignSystem.swift */; };
+		993A40E7A9AA83760F8C75FE /* Achievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 705B018E85AF570F89928552 /* Achievements.swift */; };
+		AD47F81ADB7D06C3BF2A4397 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CDDDE4931D12F35FA1DDC66A /* HomeView.swift */; };
+		AFD9B9F503A29EFB2C2CF469 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 91B4289C06352FA7E7CE3B9D /* PrivacyInfo.xcprivacy */; };
+		B5E95514ADE0BB5A0B9A8C1E /* ValetudoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B4E37057B8AADE6E23E207 /* ValetudoTests.swift */; };
+		C0A1D14B472B7FB5DA148CEA /* FirstPlanGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 237930F059994704CF40C403 /* FirstPlanGuide.swift */; };
+		D2244ABED6747DB2EA8B9FFF /* MapExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE90A29A2384BF9CA7841A6 /* MapExport.swift */; };
+		E2406AFBB8DEE2F9742C5FA2 /* DriveSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB654045B1606BEF9CB1A111 /* DriveSession.swift */; };
+		E359E0AF8B929E70D55B4A08 /* DriveCameraViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1861862C7155869E4ADD3985 /* DriveCameraViews.swift */; };
+		EC99D22C299C600507F02FD1 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D321F7742F4330B7BE9BCEF3 /* Theme.swift */; };
+		FA81102D8E875BD4D879F203 /* FloorPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A073FA640E57BA835679D50E /* FloorPlanView.swift */; };
+		FBE16BDD4D663B29D9F431E6 /* CameraCone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629C7B2D7803D6010FB4C87B /* CameraCone.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2DB76B866D016FC2BABDFEEF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB1ADC28EE422018D482D21D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3395CF1524FA558518A0803;
+			remoteInfo = OpenVacuum;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		016D6865A17CCBCB91B5B414 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		04FC887C95029C0AC79C6464 /* CoverageMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverageMapView.swift; sourceTree = "<group>"; };
+		07C1AEF2B658E9A2C96484C0 /* MapEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapEditorView.swift; sourceTree = "<group>"; };
+		0C46B56C49D36CC0EE58F157 /* Picks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Picks.swift; sourceTree = "<group>"; };
+		0CED594102E6597BABB11B0F /* PlanChildren.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanChildren.swift; sourceTree = "<group>"; };
+		13B7B4EE2CB773F660EA6AEF /* CareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareView.swift; sourceTree = "<group>"; };
+		1861862C7155869E4ADD3985 /* DriveCameraViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveCameraViews.swift; sourceTree = "<group>"; };
+		22F1C90FDD8C5DD4C3AB705E /* OpenVacuumTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = OpenVacuumTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		237930F059994704CF40C403 /* FirstPlanGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstPlanGuide.swift; sourceTree = "<group>"; };
+		2553CFB55944F841273E7D51 /* ShapeEditing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShapeEditing.swift; sourceTree = "<group>"; };
+		2C03ED50E60A86D048E7A20C /* PlanTouches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTouches.swift; sourceTree = "<group>"; };
+		320BC1DBC023D974063886A1 /* Dollhouse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dollhouse.swift; sourceTree = "<group>"; };
+		33AD74CBD5CC720B1E53FAC4 /* SettingsKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsKit.swift; sourceTree = "<group>"; };
+		34EAD020955001EA6A3245AC /* PlanMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanMask.swift; sourceTree = "<group>"; };
+		38C8B0CF00FBBE12D13CB7C7 /* ScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleView.swift; sourceTree = "<group>"; };
+		4787598F3B3CE05E3BAC83C0 /* WifiSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WifiSetupView.swift; sourceTree = "<group>"; };
+		47BD8C082151076B1B24DAF3 /* Valetudo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Valetudo-Bridging-Header.h"; sourceTree = "<group>"; };
+		5182178746233A365E171E5B /* DockGlyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockGlyph.swift; sourceTree = "<group>"; };
+		524849309D2A0936032E3D67 /* OpenVacuum.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = OpenVacuum.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		55948CAB416DB5C769192257 /* ConnectSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectSheet.swift; sourceTree = "<group>"; };
+		55B118D84364206C0C733C1B /* Sheets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sheets.swift; sourceTree = "<group>"; };
+		560B80D843DB70D23F692C1D /* PlanDrawingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanDrawingTests.swift; sourceTree = "<group>"; };
+		629C7B2D7803D6010FB4C87B /* CameraCone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCone.swift; sourceTree = "<group>"; };
+		63F4C39013AE2A89AA8D4AEE /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
+		64659E419531B7C1953816A0 /* pl_mpeg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pl_mpeg.h; sourceTree = "<group>"; };
+		6DC35A7806AD747A63897EC2 /* FloorPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloorPlan.swift; sourceTree = "<group>"; };
+		6F2F0E7F81B88C971DD4FE22 /* SettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViews.swift; sourceTree = "<group>"; };
+		705B018E85AF570F89928552 /* Achievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievements.swift; sourceTree = "<group>"; };
+		791BE13499F7CF8C1F73290A /* RoomsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomsSheet.swift; sourceTree = "<group>"; };
+		811AB2ACBB0C905769360C61 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		89455E1E10B0594F43BA65C8 /* SystemSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSettings.swift; sourceTree = "<group>"; };
+		8DE90A29A2384BF9CA7841A6 /* MapExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapExport.swift; sourceTree = "<group>"; };
+		91B4289C06352FA7E7CE3B9D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		92706A8C62CB65C7BD0CF4A1 /* RobotStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotStore.swift; sourceTree = "<group>"; };
+		994435D1D4DEA436F920DDA6 /* SignInSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInSheet.swift; sourceTree = "<group>"; };
+		A073FA640E57BA835679D50E /* FloorPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloorPlanView.swift; sourceTree = "<group>"; };
+		A7073CA797C04AC67ED647BF /* pl_mpeg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pl_mpeg.c; sourceTree = "<group>"; };
+		A745A6601DAD0F2B6476898D /* pl_mpeg-LICENSE */ = {isa = PBXFileReference; path = "pl_mpeg-LICENSE"; sourceTree = "<group>"; };
+		A75465F12E653B47E834ED9A /* HomeBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeBar.swift; sourceTree = "<group>"; };
+		AA40688E3C020F779CB565FF /* HomeTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTips.swift; sourceTree = "<group>"; };
+		B4C4D6FE1D0B9D5B8BE37EF7 /* FloorPlanHelp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloorPlanHelp.swift; sourceTree = "<group>"; };
+		B668A21A934ADAB161865B2D /* CameraStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraStream.swift; sourceTree = "<group>"; };
+		B77532AEB67153C99A05B1A9 /* ConnectivitySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivitySettings.swift; sourceTree = "<group>"; };
+		BB65A1C1AE3A072F683F2209 /* PickLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickLayer.swift; sourceTree = "<group>"; };
+		BE1E5A0949ED51ED85623CC7 /* Valetudo-License.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Valetudo-License.txt"; sourceTree = "<group>"; };
+		C728EEE50341B76000E2B034 /* MapModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapModelTests.swift; sourceTree = "<group>"; };
+		C74621D24F80648E99FAACF6 /* ValetudoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValetudoApp.swift; sourceTree = "<group>"; };
+		C7B7DC61F1BCE9878CB39DA0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		CDDDE4931D12F35FA1DDC66A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		D321F7742F4330B7BE9BCEF3 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		D62E4AF899322ACEB35B3CD1 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		E6B4E37057B8AADE6E23E207 /* ValetudoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValetudoTests.swift; sourceTree = "<group>"; };
+		EB654045B1606BEF9CB1A111 /* DriveSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriveSession.swift; sourceTree = "<group>"; };
+		F0494EBDB2A91114829B027F /* ObstacleSpotter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObstacleSpotter.swift; sourceTree = "<group>"; };
+		F05E345F8518B2640CF20CB9 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		F31B64E7A3D2E8164A6E64B9 /* ConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectView.swift; sourceTree = "<group>"; };
+		F56393699623062E04220023 /* JobRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRequest.swift; sourceTree = "<group>"; };
+		FEC949F095E1F4B7476C4A42 /* StoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreTests.swift; sourceTree = "<group>"; };
+		FFD1F46DCBA1DB7C07DAFEEC /* PlanColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanColumn.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		1306F5427B8B7EDAED473D1E /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				629C7B2D7803D6010FB4C87B /* CameraCone.swift */,
+				320BC1DBC023D974063886A1 /* Dollhouse.swift */,
+				6DC35A7806AD747A63897EC2 /* FloorPlan.swift */,
+				A073FA640E57BA835679D50E /* FloorPlanView.swift */,
+				F0494EBDB2A91114829B027F /* ObstacleSpotter.swift */,
+				BB65A1C1AE3A072F683F2209 /* PickLayer.swift */,
+				0CED594102E6597BABB11B0F /* PlanChildren.swift */,
+				34EAD020955001EA6A3245AC /* PlanMask.swift */,
+				2C03ED50E60A86D048E7A20C /* PlanTouches.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+		1F185D5C469A20A0D21929EC /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				A745A6601DAD0F2B6476898D /* pl_mpeg-LICENSE */,
+				A7073CA797C04AC67ED647BF /* pl_mpeg.c */,
+				64659E419531B7C1953816A0 /* pl_mpeg.h */,
+				47BD8C082151076B1B24DAF3 /* Valetudo-Bridging-Header.h */,
+			);
+			path = Vendor;
+			sourceTree = "<group>";
+		};
+		398513779301B9D94C1D580E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				524849309D2A0936032E3D67 /* OpenVacuum.app */,
+				22F1C90FDD8C5DD4C3AB705E /* OpenVacuumTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5B1761324ECDA76DCDE3EEA1 /* Valetudo */ = {
+			isa = PBXGroup;
+			children = (
+				C7B7DC61F1BCE9878CB39DA0 /* Assets.xcassets */,
+				016D6865A17CCBCB91B5B414 /* Info.plist */,
+				91B4289C06352FA7E7CE3B9D /* PrivacyInfo.xcprivacy */,
+				BE1E5A0949ED51ED85623CC7 /* Valetudo-License.txt */,
+				BB2E48F949B1A14D41B477AF /* API */,
+				D16042C2D1D2079A2DBE2A75 /* App */,
+				1306F5427B8B7EDAED473D1E /* Map */,
+				7E84AFD01ED2F0F2890BCC79 /* Store */,
+				1F185D5C469A20A0D21929EC /* Vendor */,
+				98D9F679826FEEBFA7D2A56A /* Views */,
+			);
+			path = Valetudo;
+			sourceTree = "<group>";
+		};
+		643822E050262C66212EC5A9 /* ValetudoTests */ = {
+			isa = PBXGroup;
+			children = (
+				C728EEE50341B76000E2B034 /* MapModelTests.swift */,
+				560B80D843DB70D23F692C1D /* PlanDrawingTests.swift */,
+				FEC949F095E1F4B7476C4A42 /* StoreTests.swift */,
+				E6B4E37057B8AADE6E23E207 /* ValetudoTests.swift */,
+			);
+			path = ValetudoTests;
+			sourceTree = "<group>";
+		};
+		7E84AFD01ED2F0F2890BCC79 /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				92706A8C62CB65C7BD0CF4A1 /* RobotStore.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		98D9F679826FEEBFA7D2A56A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				705B018E85AF570F89928552 /* Achievements.swift */,
+				13B7B4EE2CB773F660EA6AEF /* CareView.swift */,
+				B77532AEB67153C99A05B1A9 /* ConnectivitySettings.swift */,
+				55948CAB416DB5C769192257 /* ConnectSheet.swift */,
+				F31B64E7A3D2E8164A6E64B9 /* ConnectView.swift */,
+				04FC887C95029C0AC79C6464 /* CoverageMapView.swift */,
+				1861862C7155869E4ADD3985 /* DriveCameraViews.swift */,
+				EB654045B1606BEF9CB1A111 /* DriveSession.swift */,
+				237930F059994704CF40C403 /* FirstPlanGuide.swift */,
+				B4C4D6FE1D0B9D5B8BE37EF7 /* FloorPlanHelp.swift */,
+				A75465F12E653B47E834ED9A /* HomeBar.swift */,
+				AA40688E3C020F779CB565FF /* HomeTips.swift */,
+				CDDDE4931D12F35FA1DDC66A /* HomeView.swift */,
+				07C1AEF2B658E9A2C96484C0 /* MapEditorView.swift */,
+				8DE90A29A2384BF9CA7841A6 /* MapExport.swift */,
+				0C46B56C49D36CC0EE58F157 /* Picks.swift */,
+				FFD1F46DCBA1DB7C07DAFEEC /* PlanColumn.swift */,
+				791BE13499F7CF8C1F73290A /* RoomsSheet.swift */,
+				38C8B0CF00FBBE12D13CB7C7 /* ScheduleView.swift */,
+				33AD74CBD5CC720B1E53FAC4 /* SettingsKit.swift */,
+				6F2F0E7F81B88C971DD4FE22 /* SettingsViews.swift */,
+				2553CFB55944F841273E7D51 /* ShapeEditing.swift */,
+				55B118D84364206C0C733C1B /* Sheets.swift */,
+				994435D1D4DEA436F920DDA6 /* SignInSheet.swift */,
+				89455E1E10B0594F43BA65C8 /* SystemSettings.swift */,
+				4787598F3B3CE05E3BAC83C0 /* WifiSetupView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BB2E48F949B1A14D41B477AF /* API */ = {
+			isa = PBXGroup;
+			children = (
+				B668A21A934ADAB161865B2D /* CameraStream.swift */,
+				D62E4AF899322ACEB35B3CD1 /* Client.swift */,
+				F56393699623062E04220023 /* JobRequest.swift */,
+				811AB2ACBB0C905769360C61 /* Models.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		D16042C2D1D2079A2DBE2A75 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				63F4C39013AE2A89AA8D4AEE /* Connection.swift */,
+				F05E345F8518B2640CF20CB9 /* DesignSystem.swift */,
+				5182178746233A365E171E5B /* DockGlyph.swift */,
+				D321F7742F4330B7BE9BCEF3 /* Theme.swift */,
+				C74621D24F80648E99FAACF6 /* ValetudoApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		F8BA8676463425599BCF6F55 = {
+			isa = PBXGroup;
+			children = (
+				5B1761324ECDA76DCDE3EEA1 /* Valetudo */,
+				643822E050262C66212EC5A9 /* ValetudoTests */,
+				398513779301B9D94C1D580E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		ABA56B37EB231CF34F2DC35B /* OpenVacuumTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F7AB539055408B3952483C04 /* Build configuration list for PBXNativeTarget "OpenVacuumTests" */;
+			buildPhases = (
+				614B69CFE8DF7DA2850B0E4E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				31DB2623BD05F8729755BC3F /* PBXTargetDependency */,
+			);
+			name = OpenVacuumTests;
+			packageProductDependencies = (
+			);
+			productName = OpenVacuumTests;
+			productReference = 22F1C90FDD8C5DD4C3AB705E /* OpenVacuumTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B3395CF1524FA558518A0803 /* OpenVacuum */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 25952A47E91EB0E0B5481FFA /* Build configuration list for PBXNativeTarget "OpenVacuum" */;
+			buildPhases = (
+				EEC1A5D8D996C083BBB5B4DF /* Sources */,
+				0CAA329A6F00943512ACD76E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OpenVacuum;
+			packageProductDependencies = (
+			);
+			productName = OpenVacuum;
+			productReference = 524849309D2A0936032E3D67 /* OpenVacuum.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DB1ADC28EE422018D482D21D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					B3395CF1524FA558518A0803 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 06C4A2A2BEE1DDACC1B1FC76 /* Build configuration list for PBXProject "OpenVacuum" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = F8BA8676463425599BCF6F55;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 398513779301B9D94C1D580E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B3395CF1524FA558518A0803 /* OpenVacuum */,
+				ABA56B37EB231CF34F2DC35B /* OpenVacuumTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0CAA329A6F00943512ACD76E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				66598FFB31531A681B14846C /* Assets.xcassets in Resources */,
+				AFD9B9F503A29EFB2C2CF469 /* PrivacyInfo.xcprivacy in Resources */,
+				4AA6ABFD1CD84E69B236C3ED /* Valetudo-License.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		614B69CFE8DF7DA2850B0E4E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DE52CC8D1E1AB6DAE29F3C7 /* MapModelTests.swift in Sources */,
+				54BE17FC9DBA8618FB7C2B3B /* PlanDrawingTests.swift in Sources */,
+				2BF04D9201F985362FA1FCEF /* StoreTests.swift in Sources */,
+				B5E95514ADE0BB5A0B9A8C1E /* ValetudoTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEC1A5D8D996C083BBB5B4DF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				993A40E7A9AA83760F8C75FE /* Achievements.swift in Sources */,
+				FBE16BDD4D663B29D9F431E6 /* CameraCone.swift in Sources */,
+				62AB5949D601CB82214FB80E /* CameraStream.swift in Sources */,
+				2AB90C3D4277B24B65B7ACAE /* CareView.swift in Sources */,
+				442C37CAF9861523B4375CC3 /* Client.swift in Sources */,
+				5FA63799C2D661B5EAF9BA34 /* ConnectSheet.swift in Sources */,
+				06C207F5C08193241972D8BE /* ConnectView.swift in Sources */,
+				64DBAB5388CFFF806283A55C /* Connection.swift in Sources */,
+				19D9773412EDE7D647646A45 /* ConnectivitySettings.swift in Sources */,
+				1C3272A96918BE3A03188DF8 /* CoverageMapView.swift in Sources */,
+				8CAEF253314505F90FE8A0E2 /* DesignSystem.swift in Sources */,
+				6FBAC919D40F3DD50A6760B8 /* DockGlyph.swift in Sources */,
+				789C514FB70661CA123BD1A7 /* Dollhouse.swift in Sources */,
+				E359E0AF8B929E70D55B4A08 /* DriveCameraViews.swift in Sources */,
+				E2406AFBB8DEE2F9742C5FA2 /* DriveSession.swift in Sources */,
+				C0A1D14B472B7FB5DA148CEA /* FirstPlanGuide.swift in Sources */,
+				356363B52DD46115512F8E5D /* FloorPlan.swift in Sources */,
+				627124171C833E467DD3B2EE /* FloorPlanHelp.swift in Sources */,
+				FA81102D8E875BD4D879F203 /* FloorPlanView.swift in Sources */,
+				7BE8972DE006B96050D601D7 /* HomeBar.swift in Sources */,
+				55D9D94EFC2483BB71C02CF4 /* HomeTips.swift in Sources */,
+				AD47F81ADB7D06C3BF2A4397 /* HomeView.swift in Sources */,
+				19B57F0B567F493E329DD903 /* JobRequest.swift in Sources */,
+				693A8DC4FC774643B93B7BAE /* MapEditorView.swift in Sources */,
+				D2244ABED6747DB2EA8B9FFF /* MapExport.swift in Sources */,
+				55B4318FC4B053C746FDF8F0 /* Models.swift in Sources */,
+				5527DCD096203E5CE9231756 /* ObstacleSpotter.swift in Sources */,
+				53A0342FFB3CCACB917F6CB0 /* PickLayer.swift in Sources */,
+				1FE805D4304B90CD128151CE /* Picks.swift in Sources */,
+				32F27740A5E2B17D96CE35ED /* PlanChildren.swift in Sources */,
+				33DB189A4E7E40DDA1A08BAB /* PlanColumn.swift in Sources */,
+				1FA34D80602DDB48615274A7 /* PlanMask.swift in Sources */,
+				529D2B08CB597A55F3150BD7 /* PlanTouches.swift in Sources */,
+				1C97A0F4608931489D311520 /* RobotStore.swift in Sources */,
+				68C66BF0F83759BF1EA61F75 /* RoomsSheet.swift in Sources */,
+				181A29131A34115783127EF7 /* ScheduleView.swift in Sources */,
+				4C72186B03DEE2471891A4F4 /* SettingsKit.swift in Sources */,
+				60E688ECF50689E52C49237B /* SettingsViews.swift in Sources */,
+				168F6227AB540BBF833C4F62 /* ShapeEditing.swift in Sources */,
+				1726732FD46266C7E24E9861 /* Sheets.swift in Sources */,
+				517F5C742AA0BAC8D6188DD3 /* SignInSheet.swift in Sources */,
+				88E2D7D10D5D03FA44F1ADDD /* SystemSettings.swift in Sources */,
+				EC99D22C299C600507F02FD1 /* Theme.swift in Sources */,
+				22C2087211BB5B46638EA783 /* ValetudoApp.swift in Sources */,
+				00821C719DD186BB2A552BDD /* WifiSetupView.swift in Sources */,
+				712925AD3E52C232C3D3CD24 /* pl_mpeg.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		31DB2623BD05F8729755BC3F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3395CF1524FA558518A0803 /* OpenVacuum */;
+			targetProxy = 2DB76B866D016FC2BABDFEEF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		03A88C332E010DA436ADCA6B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = Valetudo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.bsidio.openvacuum;
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "Valetudo/Vendor/Valetudo-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		1D71E7759EA49035677B8512 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		3ED2269AECDDB4D7CA9EF012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		61A94C9986709AEF9B36BB99 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.bsidio.OpenVacuumTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OpenVacuum.app/OpenVacuum";
+			};
+			name = Release;
+		};
+		979C0E628D40B7F88B62BF31 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = Valetudo/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.bsidio.openvacuum;
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "Valetudo/Vendor/Valetudo-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		AA28DED5E085F84B1E65744C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.bsidio.OpenVacuumTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OpenVacuum.app/OpenVacuum";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		06C4A2A2BEE1DDACC1B1FC76 /* Build configuration list for PBXProject "OpenVacuum" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D71E7759EA49035677B8512 /* Debug */,
+				3ED2269AECDDB4D7CA9EF012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		25952A47E91EB0E0B5481FFA /* Build configuration list for PBXNativeTarget "OpenVacuum" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				03A88C332E010DA436ADCA6B /* Debug */,
+				979C0E628D40B7F88B62BF31 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F7AB539055408B3952483C04 /* Build configuration list for PBXNativeTarget "OpenVacuumTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA28DED5E085F84B1E65744C /* Debug */,
+				61A94C9986709AEF9B36BB99 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DB1ADC28EE422018D482D21D /* Project object */;
+}

@@ -1,6 +1,6 @@
 import SwiftUI
 import XCTest
-@testable import Valetudo
+@testable import OpenVacuum
 
 final class PlanMaskTests: XCTestCase {
     private func square(_ rect: CGRect) -> Path { Path(rect) }
@@ -380,5 +380,78 @@ final class NoticeTests: XCTestCase {
         let text = try String(contentsOf: url, encoding: .utf8)
         XCTAssertTrue(text.contains("Apache License"))
         XCTAssertTrue(text.contains("Sören Beye"))
+    }
+}
+
+final class TrailStyleTests: XCTestCase {
+    func testOnlyMoppingModesDrawTheBand() {
+        var state = RobotState()
+        state.mode = "vacuum"
+        XCTAssertFalse(state.mops)
+        for mode in ["mop", "vacuum_and_mop", "vacuum_then_mop"] {
+            state.mode = mode
+            XCTAssertTrue(state.mops, mode)
+        }
+    }
+
+    func testRobotsWithoutModesMopWhenAMopIsAttached() {
+        var state = RobotState()
+        XCTAssertFalse(state.mops)
+        state.attachments["mop"] = true
+        XCTAssertTrue(state.mops)
+        state.mode = "vacuum"
+        XCTAssertFalse(state.mops, "a chosen mode wins over the attachment")
+    }
+}
+
+/// Runs against the app's real defaults, so whatever was there is put back afterwards.
+final class RobotListTests: XCTestCase {
+    private let keys = ["robots", "connection", "fallbackAddress"]
+    private var saved: [String: Any] = [:]
+
+    override func setUp() {
+        for key in keys { saved[key] = UserDefaults.standard.object(forKey: key); UserDefaults.standard.removeObject(forKey: key) }
+    }
+
+    override func tearDown() {
+        for key in keys { UserDefaults.standard.set(saved[key], forKey: key) }
+    }
+
+    func testSavingKeepsEveryRobotWithFavouritesFirst() {
+        Connection(baseURL: "http://b.lan", username: nil).save()
+        Connection(baseURL: "http://a.lan", username: nil).save()
+        RobotList.setName("Zed", for: "http://a.lan")
+        RobotList.setName("Amy", for: "http://b.lan")
+        XCTAssertEqual(RobotList.all().map(\.title), ["Amy", "Zed"])
+        RobotList.setFavorite(true, for: "http://a.lan")
+        XCTAssertEqual(RobotList.all().map(\.title), ["Zed", "Amy"])
+        XCTAssertEqual(Connection.load()?.baseURL, "http://a.lan", "the last one saved is the one that opens")
+    }
+
+    func testANewLoginUpdatesTheRobotInsteadOfAddingAnother() {
+        Connection(baseURL: "http://a.lan", username: nil).save()
+        RobotList.setFavorite(true, for: "http://a.lan")
+        Connection(baseURL: "http://a.lan", username: "me").save()
+        let robots = RobotList.all()
+        XCTAssertEqual(robots.count, 1)
+        XCTAssertEqual(robots.first?.connection.username, "me")
+        XCTAssertEqual(robots.first?.favorite, true)
+    }
+
+    func testForgettingOneRobotKeepsTheOthersAndTheirAddresses() {
+        Connection(baseURL: "http://a.lan", username: nil).save()
+        Connection(baseURL: "http://b.lan", username: nil).save()
+        Connection.setFallback("http://10.0.0.5", for: "http://a.lan")
+        Connection.setFallback("http://10.0.0.6", for: "http://b.lan")
+        RobotList.forget("http://a.lan")
+        XCTAssertEqual(RobotList.all().map(\.id), ["http://b.lan"])
+        XCTAssertNil(Connection.fallback(for: "http://a.lan"))
+        XCTAssertEqual(Connection.fallback(for: "http://b.lan"), "http://10.0.0.6")
+    }
+
+    func testTheRobotFromBeforeTheListIsKept() {
+        let old = try! JSONEncoder().encode(Connection(baseURL: "http://old.lan", username: nil))
+        UserDefaults.standard.set(old, forKey: "connection")
+        XCTAssertEqual(RobotList.all().map(\.id), ["http://old.lan"])
     }
 }

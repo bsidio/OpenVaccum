@@ -4,15 +4,17 @@ import SwiftUI
 /// wrong costs a whole run, because some robots only keep a plan if they're set up first.
 struct FirstPlanGuide: View {
     let bottomInset: CGFloat
+    /// Runs once the owner has confirmed.
     let onMappingPass: () -> Void
     @Environment(RobotStore.self) private var store
     @ScaledMetric(relativeTo: .subheadline) private var iconWidth: CGFloat = 24
     /// Offered only to a robot that had it off, and only ever turned on from here: turning it
     /// off deletes the plan, and Settings warns about that first.
     @State private var offersKeepPlan = false
+    @State private var confirming = false
 
     private static let checks: [(symbol: String, text: String)] = [
-        ("bolt.fill", "The robot is on its dock"),
+        (DockGlyph.symbolName, "The robot is on its dock"),
         ("door.left.hand.open", "The doors to every room are open"),
         ("cable.connector", "No cables are loose on the floor"),
         ("nosign", "Anywhere it shouldn't go is blocked off")
@@ -68,7 +70,7 @@ struct FirstPlanGuide: View {
         VStack(alignment: .leading, spacing: 12) {
             ForEach(Self.checks, id: \.text) { check in
                 HStack(spacing: 10) {
-                    Image(systemName: check.symbol)
+                    AppSymbol(name: check.symbol)
                         .foregroundStyle(Theme.cobalt)
                         .frame(width: iconWidth)
                         .accessibilityHidden(true)
@@ -96,7 +98,7 @@ struct FirstPlanGuide: View {
 
     @ViewBuilder private var nextStep: some View {
         if store.has(Cap.mappingPass) {
-            Button(action: onMappingPass) {
+            Button { confirming = true } label: {
                 Text("Run a Mapping Pass")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Theme.onCobalt)
@@ -105,6 +107,11 @@ struct FirstPlanGuide: View {
             }
             .buttonStyle(.pressable)
             .disabled(!store.connected)
+            .confirmationDialog("Start a mapping pass?", isPresented: $confirming, titleVisibility: .visible) {
+                Button("Run a Mapping Pass", action: onMappingPass)
+            } message: {
+                Text("The robot drives around your home to make a new floor plan. If it already has one, this can replace it.")
+            }
         } else if store.has(Cap.basic) {
             Text("Then start a clean. Let the robot finish and go back to its dock on its own, or the plan won't be saved.")
                 .font(.footnote)

@@ -41,16 +41,6 @@ struct CareView: View {
             .navigationTitle("Care")
             .task(id: [store.hasLoaded, store.connected, hasContent, store.capabilities.isEmpty]) { await checkReads() }
             .sheet(isPresented: $showLogin) { SignInSheet() }
-            .confirmationDialog("Reset \(resetting?.title ?? "This Item")?", isPresented: $confirming,
-                                titleVisibility: .visible, presenting: resetting) { item in
-                Button("Reset Counter") {
-                    store.markDone(item)
-                }
-            } message: { item in
-                Text(item.isCleaningTask
-                     ? "Do this after cleaning. It restarts the countdown."
-                     : "Do this after fitting a new one. It restarts the countdown.")
-            }
         }
     }
 
@@ -184,6 +174,17 @@ struct CareView: View {
                     PartButton(item: item, life: store.life(of: item)) {
                         resetting = item
                         confirming = true
+                    }
+                    // On the part's row, so the dialog points at the part being reset.
+                    .confirmationDialog("Reset \(item.title)?",
+                                        isPresented: Binding(get: { confirming && resetting?.id == item.id },
+                                                             set: { if !$0 { confirming = false } }),
+                                        titleVisibility: .visible) {
+                        Button("Reset Counter") { store.markDone(item) }
+                    } message: {
+                        Text(item.isCleaningTask
+                             ? "Do this after cleaning. It restarts the countdown."
+                             : "Do this after fitting a new one. It restarts the countdown.")
                     }
                 }
             } header: {

@@ -153,11 +153,11 @@ private struct SettingsDraftGuard: ViewModifier {
                         Button { confirming = true } label: {
                             Label("Back", systemImage: "chevron.backward")
                         }
+                        .confirmationDialog("Discard your changes?", isPresented: $confirming, titleVisibility: .visible) {
+                            Button("Discard Changes", role: .destructive) { dismiss() }
+                        }
                     }
                 }
-            }
-            .confirmationDialog("Discard your changes?", isPresented: $confirming, titleVisibility: .visible) {
-                Button("Discard Changes", role: .destructive) { dismiss() }
             }
     }
 }

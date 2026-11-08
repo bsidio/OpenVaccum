@@ -206,12 +206,15 @@ struct HomeBar: View {
         case .stop:
             RemoteIcon(symbol: "stop.fill", label: "Stop", side: side, action: guarded(store.stop)).disabled(!store.connected)
         case .dock:
-            RemoteIcon(symbol: "bolt.fill", label: "Dock", side: side, action: guarded(store.dock))
+            RemoteIcon(symbol: DockGlyph.symbolName, label: "Dock", side: side, action: guarded(store.dock))
                 .disabled(!store.connected || !store.state.canDock)
         case .locate:
             RemoteIcon(symbol: "speaker.wave.2.fill", label: "Locate", side: side, action: guarded(store.locate)).disabled(!store.connected)
         case .controls:
             RemoteIcon(symbol: "slider.horizontal.3", label: "Controls", side: side, action: onControls)
+            if store.connected, let level = store.state.battery {
+                BarBattery(level: level, charging: store.state.charging)
+            }
         }
     }
 }
@@ -386,7 +389,7 @@ private struct RemoteIcon: View {
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: symbol)
+            AppSymbol(name: symbol)
                 .font(.body.weight(.semibold))
                 .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                 .foregroundStyle(Theme.ink)

@@ -42,8 +42,11 @@ struct SettingsView: View {
         return store.cameraEnabled ? warning + " Camera streaming also turns off." : warning
     }
 
+    private var nextRobot: SavedRobot? { session.robots.first { $0.id != session.currentRobot } }
+
     private var disconnectWarning: String {
         let keeps = "The robot keeps its floor plan and schedule."
+            + (nextRobot.map { " The app then opens \($0.title)." } ?? "")
         if hasSavedLogin {
             return keeps + " This phone forgets the login, so you'll need the username and password to connect again."
         }
@@ -54,6 +57,7 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 Section { RobotHeader() }
+                robotsSection
                 if store.needsLogin {
                     Section {
                         Banner(text: RobotStore.loginAdvice, tone: .critical, action: { showLogin = true })
@@ -75,6 +79,11 @@ struct SettingsView: View {
                         Button(role: .destructive) { confirmCameraOff = true } label: {
                             Text("Turn Off Camera Streaming").frame(maxWidth: .infinity)
                         }
+                        .confirmationDialog("Turn off camera streaming?", isPresented: $confirmCameraOff, titleVisibility: .visible) {
+                            Button("Turn Off and Delete", role: .destructive) { store.disableCamera() }
+                        } message: {
+                            Text(CameraCopy.turnOffWarning)
+                        }
                     } footer: {
                         Text("This also deletes the Duststreamer from the robot.")
                     }
@@ -83,6 +92,11 @@ struct SettingsView: View {
                 Section {
                     Button(role: .destructive) { confirmDisconnect = true } label: {
                         Text("Disconnect This Robot").frame(maxWidth: .infinity)
+                    }
+                    .confirmationDialog("Disconnect this robot?", isPresented: $confirmDisconnect, titleVisibility: .visible) {
+                        Button("Disconnect", role: .destructive) { session.disconnect() }
+                    } message: {
+                        Text(disconnectWarning)
                     }
                 }
             }
@@ -106,22 +120,25 @@ struct SettingsView: View {
                 if !editingName { commitName() }
             }
             .task(id: ObjectIdentifier(store)) { await loadRowValues() }
-            .confirmationDialog("Turn off camera streaming?", isPresented: $confirmCameraOff, titleVisibility: .visible) {
-                Button("Turn Off and Delete", role: .destructive) { store.disableCamera() }
-            } message: {
-                Text(CameraCopy.turnOffWarning)
-            }
-            .confirmationDialog("Restore default configuration?", isPresented: $confirmRestore, titleVisibility: .visible) {
-                Button(store.routines.isEmpty ? "Restore Defaults" : "Delete Routines and Restore", role: .destructive) {
-                    restoreDefaults()
+        }
+    }
+
+    /// Every robot saved on this phone. Tapping one opens it, and starred ones stay at the top.
+    private var robotsSection: some View {
+        Section {
+            if session.robots.count > 1 {
+                ForEach(session.robots) { robot in
+                    SavedRobotRow(robot: robot, current: robot.id == session.currentRobot)
                 }
-            } message: {
-                Text(restoreWarning)
             }
-            .confirmationDialog("Disconnect this robot?", isPresented: $confirmDisconnect, titleVisibility: .visible) {
-                Button("Disconnect", role: .destructive) { session.disconnect() }
-            } message: {
-                Text(disconnectWarning)
+            Button { session.addingRobot = true } label: {
+                Label("Add Another Robot", systemImage: "plus.circle.fill")
+            }
+        } header: {
+            if session.robots.count > 1 { Text("Robots") }
+        } footer: {
+            if session.robots.count > 1 {
+                Text("Tap a robot to switch to it. Starred robots stay at the top, and swiping one away removes it from this phone.")
             }
         }
     }
@@ -193,6 +210,13 @@ struct SettingsView: View {
                 .frame(maxWidth: .infinity)
             }
             .disabled(restoring)
+            .confirmationDialog("Restore default configuration?", isPresented: $confirmRestore, titleVisibility: .visible) {
+                Button(store.routines.isEmpty ? "Restore Defaults" : "Delete Routines and Restore", role: .destructive) {
+                    restoreDefaults()
+                }
+            } message: {
+                Text(restoreWarning)
+            }
         } footer: {
             Text("Deletes all routines and the robot's name, turns the login off, and resets MQTT, time and update settings. Your floor plan and Wi-Fi aren't changed.")
         }
@@ -284,6 +308,58 @@ struct SettingsView: View {
 }
 
 /// The banner at the top of Settings, like the Apple Account row in iOS.
+/// One saved robot: tap to open it, star to keep it at the top.
+private struct SavedRobotRow: View {
+    let robot: SavedRobot
+    let current: Bool
+    @Environment(Session.self) private var session
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button { session.switchTo(robot) } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: current ? "checkmark.circle.fill" : "circle")
+                        .font(.title3)
+                        .foregroundStyle(current ? Theme.cobalt : Theme.slate.opacity(0.5))
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(robot.title).foregroundStyle(Theme.ink)
+                        if robot.title != robot.address {
+                            Text(robot.address).font(.footnote).foregroundStyle(Theme.slate)
+                        }
+                    }
+                    Spacer(minLength: 8)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(robot.title)
+            .accessibilityValue(current ? "Open" : "")
+            .accessibilityHint(current ? "" : "Switches to this robot")
+            Button { session.setFavorite(!robot.favorite, for: robot) } label: {
+                Image(systemName: robot.favorite ? "star.fill" : "star")
+                    .foregroundStyle(robot.favorite ? .yellow : Theme.slate)
+                    .frame(width: Metric.hitTarget, height: Metric.hitTarget)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(robot.favorite ? "Remove from Favorites" : "Add to Favorites")
+        }
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            if !current {
+                Button { session.forget(robot) } label: { Label("Remove", systemImage: "trash") }
+                    .tint(.red)
+            }
+        }
+        .swipeActions(edge: .leading) {
+            Button { session.setFavorite(!robot.favorite, for: robot) } label: {
+                Label(robot.favorite ? "Unstar" : "Star", systemImage: robot.favorite ? "star.slash" : "star.fill")
+            }
+            .tint(.yellow)
+        }
+    }
+}
+
 private struct RobotHeader: View {
     @Environment(RobotStore.self) private var store
 
@@ -345,12 +421,12 @@ private extension RobotSwitch {
     }
 }
 
-private extension ChoiceSetting {
+extension ChoiceSetting {
     /// "Empty the Bin" reads like a button, and the control sheet has one by that name.
     var rowTitle: String { self == .autoEmptyInterval ? "Auto-Empty Frequency" : title }
 
     /// The order Valetudo's web page lists these in. The robot's own order is arbitrary.
-    private var order: [String] {
+    fileprivate var order: [String] {
         switch self {
         case .cleanRoute: return ["quick", "normal", "intensive", "deep"]
         case .carpetSensor: return ["lift", "avoid", "detach", "off"]
@@ -369,6 +445,8 @@ private extension ChoiceSetting {
     func label(_ raw: String) -> String {
         switch (self, raw) {
         case (.carpetSensor, "off"): return "None"
+        // What robot makers' own apps call it.
+        case (.cleanRoute, "normal"): return "Standard"
         case (.carpetSensor, "avoid"): return "Avoid Carpet"
         case (.carpetSensor, "lift"): return "Lift Mop"
         case (.carpetSensor, "detach"): return "Detach Mop"
@@ -452,11 +530,6 @@ private struct BehaviorView: View {
             }
         }
         .settingsPage("Behavior")
-        .confirmationDialog("Stop keeping the floor plan?", isPresented: $confirmForgetPlan, titleVisibility: .visible) {
-            Button("Delete Floor Plan", role: .destructive) { store.set(.persistentMap, to: false) }
-        } message: {
-            Text("This deletes the current floor plan, including its rooms, names and no-go zones. It can't be undone. The robot then draws a new one on every run.")
-        }
         .task {
             await store.loadSettings()
             guard store.has(ChoiceSetting.cleanRoute.rawValue) else { return }
@@ -512,6 +585,14 @@ private struct BehaviorView: View {
                     store.set(setting, to: on)
                 }
             }))
+        // On the switch itself, so the dialog points at it.
+        .confirmationDialog("Stop keeping the floor plan?",
+                            isPresented: setting == .persistentMap ? $confirmForgetPlan : .constant(false),
+                            titleVisibility: .visible) {
+            Button("Delete Floor Plan", role: .destructive) { store.set(.persistentMap, to: false) }
+        } message: {
+            Text("This deletes the current floor plan, including its rooms, names and no-go zones. It can't be undone. The robot then draws a new one on every run.")
+        }
     }
 
     private var twistsWithExtension: Bool { store.has(RobotSwitch.mopExtension.rawValue) }
@@ -828,10 +909,6 @@ private struct QuirksView: View {
     @State private var busy: Set<String> = []
     @State private var pendingAction: Quirk?
 
-    private var confirmingAction: Binding<Bool> {
-        Binding(get: { pendingAction != nil }, set: { if !$0 { pendingAction = nil } })
-    }
-
     var body: some View {
         SettingsLoader(phase: phase, retry: retry) {
             if quirks.isEmpty {
@@ -849,12 +926,6 @@ private struct QuirksView: View {
             }
         }
         .settingsPage("Advanced Options")
-        .confirmationDialog(pendingAction.map { "Run \($0.title)?" } ?? "", isPresented: confirmingAction,
-                            titleVisibility: .visible, presenting: pendingAction) { quirk in
-            Button("Run") { set(quirk, to: "trigger") }
-        } message: { quirk in
-            if !quirk.description.isEmpty { Text(quirk.description) }
-        }
         .task(id: attempt) {
             // Coming back to this tab restarts the task, which has nothing new to do.
             guard !phase.hasData else { return }
@@ -906,6 +977,15 @@ private struct QuirksView: View {
                 if busy.contains(quirk.id) { ProgressView() }
             }
             .contentShape(Rectangle())
+        }
+        // On the row, so the dialog points at the option being run.
+        .confirmationDialog("Run \(quirk.title)?",
+                            isPresented: Binding(get: { pendingAction?.id == quirk.id },
+                                                 set: { if !$0 { pendingAction = nil } }),
+                            titleVisibility: .visible) {
+            Button("Run") { set(quirk, to: "trigger") }
+        } message: {
+            if !quirk.description.isEmpty { Text(quirk.description) }
         }
     }
 

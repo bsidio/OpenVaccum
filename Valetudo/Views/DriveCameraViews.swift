@@ -582,6 +582,7 @@ private struct PlanStage: View {
         if let plan = store.plan, !plan.isEmpty {
             PlanCanvas(plan: plan, active: active,
                        paused: store.connected && store.state.isUnfinished,
+                       trailStyle: store.state.mops ? .band : .lines,
                        insets: EdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 14),
                        overlay: { context, t in
                            if showsCameraView { CameraCone.draw(for: plan, in: context, t) }
@@ -639,9 +640,15 @@ struct CameraFeed: View {
     private var live: Bool { stream.phase == .live && !stalled }
 
     private var failure: String? {
-        if case .failed(let message) = stream.phase { return message }
-        return nil
+        guard case .failed(let message) = stream.phase else { return nil }
+        if stream.hasNoVideo, docked {
+            return "The robot is on its dock. Its camera may only work once it's off the dock, "
+                + "so video starts by itself when the robot leaves."
+        }
+        return message
     }
+
+    private var docked: Bool { store.state.status == "docked" || store.plan?.isDocked == true }
 
     private var aspect: CGFloat {
         guard let frame = stream.frame, frame.height > 0 else { return 4 / 3 }
@@ -666,6 +673,9 @@ struct CameraFeed: View {
             if let failure {
                 FeedFailure(message: failure) { stream.start() }
                     .transition(.opacity)
+                    .onChange(of: docked) { was, now in
+                        if was, !now { stream.retryAfterLeavingDock() }
+                    }
             } else if !live {
                 ProgressView()
                     .controlSize(.large)
@@ -849,16 +859,6 @@ struct CameraView: View {
                     if !on, !turningOff { dismiss() }
                 }
                 .onDisappear { stream?.stop() }
-                .confirmationDialog("Turn off camera streaming?", isPresented: $confirmOff, titleVisibility: .visible) {
-                    Button("Turn Off and Delete", role: .destructive) {
-                        stream?.stop()
-                        turningOff = true
-                        store.disableCamera()
-                        dismiss()
-                    }
-                } message: {
-                    Text(CameraCopy.turnOffWarning)
-                }
         }
         .preferredColorScheme(.dark)
     }
@@ -888,6 +888,16 @@ struct CameraView: View {
             Image(systemName: "ellipsis")
         }
         .accessibilityLabel("Camera Options")
+        .confirmationDialog("Turn off camera streaming?", isPresented: $confirmOff, titleVisibility: .visible) {
+            Button("Turn Off and Delete", role: .destructive) {
+                stream?.stop()
+                turningOff = true
+                store.disableCamera()
+                dismiss()
+            }
+        } message: {
+            Text(CameraCopy.turnOffWarning)
+        }
     }
 
     // MARK: Player

@@ -139,7 +139,7 @@ final class RobotStore {
         case "docked": return state.charging ? "\(n) is docked and charging" : "\(n) is docked"
         case "cleaning":
             switch state.flag {
-            case "segment": return "\(n) is cleaning rooms"
+            case "segment": return "\(n) is cleaning \(plan?.cleaningWhere ?? "rooms")"
             case "zone": return "\(n) is cleaning a zone"
             case "spot": return "\(n) is cleaning a spot"
             default: return "\(n) is cleaning"

@@ -17,12 +17,55 @@ struct ValetudoApp: App {
 @MainActor @Observable
 final class Session {
     private(set) var store: RobotStore?
+    /// Every robot saved on this phone, favourites first.
+    private(set) var robots: [SavedRobot] = []
+    /// Shows the connect screen over the current robot, to add another.
+    var addingRobot = false
     private var following: Task<Void, Never>?
 
     init() {
         // The unit tests run inside this app, and must never reach a robot saved on that device.
-        guard !Self.isUnitTest, let saved = Connection.load() else { return }
+        guard !Self.isUnitTest else { return }
+        robots = RobotList.all()
+        guard let saved = Connection.load() else { return }
         open(saved, password: Keychain.password(for: saved.baseURL))
+    }
+
+    /// The address of the open robot, which is how saved robots are told apart.
+    var currentRobot: String? { store?.client.baseURL }
+
+    func switchTo(_ robot: SavedRobot) {
+        guard robot.id != currentRobot else { return }
+        robot.connection.save()
+        open(robot.connection, password: Keychain.password(for: robot.id))
+        refreshRobots()
+    }
+
+    func setFavorite(_ favorite: Bool, for robot: SavedRobot) {
+        RobotList.setFavorite(favorite, for: robot.id)
+        refreshRobots()
+    }
+
+    /// Removes a robot from this phone. Removing the open one moves on to the next.
+    func forget(_ robot: SavedRobot) {
+        if robot.id == currentRobot {
+            disconnect()
+        } else {
+            RobotList.forget(robot.id)
+            refreshRobots()
+        }
+    }
+
+    /// Kept so the list can name robots that aren't open.
+    func nameSeen(_ name: String) {
+        guard let currentRobot, !name.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+        RobotList.setName(name, for: currentRobot)
+        refreshRobots()
+    }
+
+    private func refreshRobots() {
+        let latest = RobotList.all()
+        if latest != robots { robots = latest }
     }
 
     private func open(_ connection: Connection, password: String?) {
@@ -66,15 +109,25 @@ final class Session {
         // A new robot with no saved password couldn't reconnect next launch, so it isn't kept.
         if stored || Connection.load() != nil { connection.save() }
         open(connection, password: password)
+        refreshRobots()
+        addingRobot = false
         if !stored {
             store?.notify("Couldn't save the password. You'll need to sign in again next time.",
                           symbol: Tone.warning.symbol, seconds: 6, isProblem: true)
         }
     }
 
-    func disconnect() {
-        if let saved = Connection.load() { Keychain.setPassword(nil, for: saved.baseURL) }
+    /// Forgets the open robot. If others are saved, the next one opens, unless the owner is
+    /// about to look for this one again, as after moving it to another network.
+    func disconnect(toFindAgain: Bool = false) {
+        if let saved = Connection.load() { RobotList.forget(saved.baseURL) }
         Connection.clear()
+        refreshRobots()
+        if !toFindAgain, let next = robots.first {
+            next.connection.save()
+            open(next.connection, password: Keychain.password(for: next.id))
+            return
+        }
         following?.cancel()
         following = nil
         store = nil
@@ -85,21 +138,33 @@ struct RootView: View {
     @Environment(Session.self) private var session
 
     var body: some View {
+        @Bindable var session = session
         Group {
             if let store = session.store {
                 MainTabs()
                     .environment(store)
                     .modifier(WifiSetupGate(client: store.client))
+                    // A fresh screen for each robot, so nothing picked on one can be sent to another.
+                    .id(store.client.baseURL)
             } else {
                 ConnectView()
             }
         }
         .animation(.snappy(duration: 0.35), value: session.store == nil)
+        .sheet(isPresented: $session.addingRobot) {
+            NavigationStack {
+                ConnectView()
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) { Button("Cancel") { session.addingRobot = false } }
+                    }
+            }
+        }
     }
 }
 
 struct MainTabs: View {
     @Environment(RobotStore.self) private var store
+    @Environment(Session.self) private var session
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("tab") private var tab = "home"
 
@@ -123,6 +188,7 @@ struct MainTabs: View {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { Task { await store.refreshOnReturn() } }
         }
+        .onChange(of: store.friendlyName, initial: true) { _, name in session.nameSeen(name) }
     }
 }
 

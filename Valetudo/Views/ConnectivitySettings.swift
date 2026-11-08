@@ -100,6 +100,11 @@ struct WifiView: View {
                     Section {
                         SettingsActionButton("Connect the Robot", busy: connecting) { confirm = true }
                             .disabled(ssid.isEmpty || password.isEmpty || connecting)
+                            .confirmationDialog("Move the robot to \(ssid)?", isPresented: $confirm, titleVisibility: .visible) {
+                                Button("Connect the Robot") { connect() }
+                            } message: {
+                                Text(Self.wrongDetails)
+                            }
                             .settingsBareRow()
                     }
                 } else {
@@ -110,18 +115,8 @@ struct WifiView: View {
         }
         .settingsPage("Wi-Fi")
         .sensoryFeedback(.selection, trigger: picks)
-        .confirmationDialog("Move the robot to \(ssid)?", isPresented: $confirm, titleVisibility: .visible) {
-            Button("Connect the Robot") { connect() }
-        } message: {
-            Text(Self.wrongDetails)
-        }
-        .confirmationDialog("Disconnect to set up Wi-Fi?", isPresented: $confirmSetup, titleVisibility: .visible) {
-            Button("Disconnect", role: .destructive) { session.disconnect() }
-        } message: {
-            Text(forgetsWhat)
-        }
         .alert("The Robot Is Changing Networks", isPresented: isJoining, presenting: joining) { _ in
-            Button("Find the Robot") { session.disconnect() }
+            Button("Find the Robot") { session.disconnect(toFindAgain: true) }
         } message: { network in
             Text(afterJoining(network))
         }
@@ -192,6 +187,11 @@ struct WifiView: View {
         Section {
             SettingsLinkRow("Find Your Robot's Guide", "book.fill", .blue, url: Self.robotGuides)
             Button("Disconnect to Set Up Wi-Fi") { confirmSetup = true }
+                .confirmationDialog("Disconnect to set up Wi-Fi?", isPresented: $confirmSetup, titleVisibility: .visible) {
+                    Button("Disconnect", role: .destructive) { session.disconnect(toFindAgain: true) }
+                } message: {
+                    Text(forgetsWhat)
+                }
         } footer: {
             Text("After the reset, join the robot's own Wi-Fi in this phone's Settings, then disconnect here and connect to it. Its address is usually http://192.168.5.1, http://192.168.8.1 or http://10.201.126.1. The app then lets you choose the new network.")
         }
@@ -1141,20 +1141,20 @@ struct LoginView: View {
             if phase.hasData {
                 ToolbarItem(placement: .confirmationAction) {
                     SettingsSaveButton(saving: saving, enabled: canSave) { confirm = true }
+                    .confirmationDialog(dialogTitle, isPresented: $confirm, titleVisibility: .visible) {
+                        if enabled {
+                            Button("Save Login") { save() }
+                        } else {
+                            Button("Turn Off Login", role: .destructive) { save() }
+                        }
+                    } message: {
+                        if enabled {
+                            Text("Valetudo will ask for the username \(cleanUsername) and this password. If you lose them, you'd need to reach the robot over SSH to reset them.")
+                        } else {
+                            Text("Anyone on your network will be able to control the robot.")
+                        }
+                    }
                 }
-            }
-        }
-        .confirmationDialog(dialogTitle, isPresented: $confirm, titleVisibility: .visible) {
-            if enabled {
-                Button("Save Login") { save() }
-            } else {
-                Button("Turn Off Login", role: .destructive) { save() }
-            }
-        } message: {
-            if enabled {
-                Text("Valetudo will ask for the username \(cleanUsername) and this password. If you lose them, you'd need to reach the robot over SSH to reset them.")
-            } else {
-                Text("Anyone on your network will be able to control the robot.")
             }
         }
         .task(id: attempt) {

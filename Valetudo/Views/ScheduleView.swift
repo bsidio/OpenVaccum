@@ -200,7 +200,6 @@ struct ScheduleView: View {
         .refreshable { await refresh() }
         .animation(reduceMotion ? nil : .snappy(duration: 0.25), value: store.routines)
         .animation(reduceMotion ? nil : .snappy(duration: 0.25), value: store.quietHours)
-        .modifier(RoutineDialogs(run: $confirmRun, delete: $confirmDelete))
     }
 
     /// Opens the robot's own copy, because saving replaces what's there with what's in the
@@ -242,6 +241,8 @@ struct ScheduleView: View {
                 Divider()
                 Button(role: .destructive) { confirmDelete = routine } label: { Label("Delete", systemImage: "trash") }
             }
+            // On the row, so the dialog points at the routine it's about.
+            .modifier(RoutineDialogs(run: $confirmRun, delete: $confirmDelete, only: routine.id))
     }
 }
 
@@ -250,6 +251,8 @@ private struct RoutineDialogs: ViewModifier {
     @Environment(RobotStore.self) private var store
     @Binding var run: Routine?
     @Binding var delete: Routine?
+    /// Set on a row, so only that row's dialog answers.
+    var only: String?
     var onConfirm: () -> Void = {}
 
     func body(content: Content) -> some View {
@@ -277,7 +280,8 @@ private struct RoutineDialogs: ViewModifier {
     }
 
     private func isShowing(_ item: Binding<Routine?>) -> Binding<Bool> {
-        Binding(get: { item.wrappedValue != nil }, set: { if !$0 { item.wrappedValue = nil } })
+        Binding(get: { item.wrappedValue.map { only == nil || $0.id == only } ?? false },
+                set: { if !$0 { item.wrappedValue = nil } })
     }
 }
 
@@ -857,11 +861,6 @@ private struct RoutineEditor: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbar }
                 .modifier(ToastHost(toast: store.toast))
-                .modifier(RoutineDialogs(run: $confirmRun, delete: $confirmDelete, onConfirm: { dismiss() }))
-                .confirmationDialog("Discard your changes?", isPresented: $confirmDiscard, titleVisibility: .visible) {
-                    Button("Discard Changes", role: .destructive) { dismiss() }
-                    Button("Keep Editing", role: .cancel) {}
-                }
                 .task { await loadRoomDetails() }
         }
         // A stray swipe shouldn't throw away changes, or lose sight of a save that's under way.
@@ -877,6 +876,7 @@ private struct RoutineEditor: View {
             areaSection
             modeSection
             levelSection
+            routeSection
             actionSections
         }
         .themedList()
@@ -894,6 +894,10 @@ private struct RoutineEditor: View {
                 if hasChanges { confirmDiscard = true } else { dismiss() }
             }
             .disabled(saving)
+            .confirmationDialog("Discard your changes?", isPresented: $confirmDiscard, titleVisibility: .visible) {
+                Button("Discard Changes", role: .destructive) { dismiss() }
+                Button("Keep Editing", role: .cancel) {}
+            }
         }
         ToolbarItem(placement: .confirmationAction) {
             if saving {
@@ -1139,11 +1143,23 @@ private struct RoutineEditor: View {
         }
     }
 
+    /// Valetudo's routines can't set the route, so say which one this routine will get.
+    @ViewBuilder private var routeSection: some View {
+        if let route = store.choices[.cleanRoute] {
+            Section {
+                LabeledContent(ChoiceSetting.cleanRoute.title, value: ChoiceSetting.cleanRoute.label(route.value))
+            } footer: {
+                Text("Valetudo can't set the cleaning route for a single routine, so this one uses the robot's current route. You can change it in Controls on Home.")
+            }
+        }
+    }
+
     @ViewBuilder private var actionSections: some View {
         if !draft.isNew, let saved {
             Section {
                 Button { confirmRun = saved } label: { Label("Run Now", systemImage: "play.fill") }
                     .disabled(hasChanges)
+                    .modifier(RoutineDialogs(run: $confirmRun, delete: .constant(nil), onConfirm: { dismiss() }))
             } footer: {
                 if hasChanges {
                     Text("Save your changes first. Run Now uses the routine as it's saved on the robot.")
@@ -1151,6 +1167,7 @@ private struct RoutineEditor: View {
             }
             Section {
                 Button("Delete Routine", role: .destructive) { confirmDelete = saved }
+                    .modifier(RoutineDialogs(run: .constant(nil), delete: $confirmDelete, onConfirm: { dismiss() }))
             }
         }
     }

@@ -2,7 +2,7 @@ import Observation
 import ObjectiveC
 import UIKit
 import XCTest
-@testable import Valetudo
+@testable import OpenVacuum
 
 /// Answers `StubRobot` can't give: any status, silence, or an answer held back until a test lets
 /// it go. It sits in front of `StubRobot`, so nothing here opens a socket either, and it logs

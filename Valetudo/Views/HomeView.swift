@@ -6,6 +6,7 @@ struct HomeView: View {
     private static let fitLift = PlanColumn.reserved - 10
 
     @Environment(RobotStore.self) private var store
+    @Environment(Session.self) private var session
     @Environment(\.scenePhase) private var scenePhase
     @State private var touches = PlanTouches()
     @State private var obstacle: FloorPlan.Obstacle?
@@ -43,7 +44,7 @@ struct HomeView: View {
     private var showsCamera: Bool { store.has(Cap.camera) && store.cameraEnabled }
 
     private var hasMore: Bool {
-        canEdit || canDrive || showsCamera || store.has(Cap.mappingPass) || hasPlan
+        canEdit || canDrive || showsCamera || store.has(Cap.mappingPass) || hasPlan || session.robots.count > 1
     }
 
     private var hasPlan: Bool { store.plan?.isEmpty == false }
@@ -85,11 +86,6 @@ struct HomeView: View {
         .fullScreenCover(isPresented: $showCoverage) { coverage }
         .sheet(isPresented: $showLogin) { SignInSheet() }
         .sheet(item: $export) { MapExportSheet(file: $0.file).presentationDetents([.medium, .large]) }
-        .confirmationDialog("Start a mapping pass?", isPresented: $confirmMapping, titleVisibility: .visible) {
-            Button("Run a Mapping Pass") { store.startMappingPass() }
-        } message: {
-            Text("The robot drives around your home to make a new floor plan. If it already has one, this can replace it.")
-        }
         .onAppear(perform: connectTouches)
         // Signing in again brings a new store, and these closures would keep the old one alive.
         .onChange(of: ObjectIdentifier(store)) { connectTouches() }
@@ -155,9 +151,6 @@ struct HomeView: View {
                         .contentTransition(.opacity)
                         .animation(.easeInOut(duration: 0.25), value: store.sentence)
                         .accessibilityAddTraits(.isHeader)
-                    if store.connected, let level = store.state.battery {
-                        BatteryLabel(level: level, charging: store.state.charging)
-                    }
                 }
                 Spacer(minLength: 0)
                 GlassIconButton(symbol: store.openEvents.isEmpty ? "bell" : "bell.badge.fill", label: alertsLabel,
@@ -180,6 +173,18 @@ struct HomeView: View {
 
     private var moreMenu: some View {
         Menu {
+            // With more than one robot, switching is the first thing here.
+            if session.robots.count > 1 {
+                Section("Robots") {
+                    ForEach(session.robots) { robot in
+                        Button { session.switchTo(robot) } label: {
+                            Label(robot.title, systemImage: robot.id == session.currentRobot ? "checkmark"
+                                                            : robot.favorite ? "star.fill" : "circle")
+                        }
+                    }
+                    Button { session.addingRobot = true } label: { Label("Add Another Robot", systemImage: "plus") }
+                }
+            }
             if canEdit {
                 Button { showEditor = true } label: { Label("Edit Floor Plan", systemImage: "pencil.and.ruler") }
             }
@@ -207,6 +212,12 @@ struct HomeView: View {
                 .glass(in: Circle(), interactive: true)
         }
         .accessibilityLabel("More")
+        // On the menu's button, so the dialog points at where it was chosen.
+        .confirmationDialog("Start a mapping pass?", isPresented: $confirmMapping, titleVisibility: .visible) {
+            Button("Run a Mapping Pass") { store.startMappingPass() }
+        } message: {
+            Text("The robot drives around your home to make a new floor plan. If it already has one, this can replace it.")
+        }
     }
 
     private var coverage: some View {
@@ -259,6 +270,7 @@ struct HomeView: View {
                 if in3D {
                     DollhouseView(plan: plan, picked: picks.rooms, numbered: store.roomOrderSupported, active: active,
                                   paused: store.connected && store.state.isUnfinished,
+                                  trailStyle: trailStyle,
                                   bottomInset: planInsets.bottom, resetLift: Self.fitLift,
                                   onRoom: touches.pick(room:), onObstacle: { touches.onObstacle($0) })
                         .transition(.opacity)
@@ -272,18 +284,20 @@ struct HomeView: View {
         } else if !store.connected || store.mapLoadFailed {
             planFailed
         } else if store.hasLoaded {
-            FirstPlanGuide(bottomInset: planInsets.bottom) { confirmMapping = true }
+            FirstPlanGuide(bottomInset: planInsets.bottom, onMappingPass: store.startMappingPass)
         } else {
             ProgressView("Loading floor plan")
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 
+    private var trailStyle: PlanCanvas.TrailStyle { store.state.mops ? .band : .lines }
+
     private func flatPlan(_ plan: FloorPlan, active: Bool) -> some View {
         let insets = planInsets
         return PlanCanvas(
             plan: plan, selected: Set(picks.rooms), active: active,
-            paused: store.connected && store.state.isUnfinished, insets: insets,
+            paused: store.connected && store.state.isUnfinished, trailStyle: trailStyle, insets: insets,
             touches: touches, order: store.roomOrderSupported ? picks.rooms : [],
             pickLayer: { [touches] t in AnyView(PickLayer(touches: touches, plan: plan, t: t, insets: insets)) },
             fitLift: Self.fitLift)
@@ -398,11 +412,12 @@ private struct NoteSlot: View {
     }
 }
 
-private struct BatteryLabel: View {
+/// The robot's charge, in the bar beside Controls where it's always in sight.
+struct BarBattery: View {
     let level: Int
     let charging: Bool
 
-    private var symbol: String {
+    static func symbol(level: Int, charging: Bool) -> String {
         if charging { return "battery.100percent.bolt" }
         switch level {
         case 88...: return "battery.100percent"
@@ -414,11 +429,20 @@ private struct BatteryLabel: View {
     }
 
     var body: some View {
-        Label("\(level)%", systemImage: symbol)
-            .font(.subheadline.weight(.medium))
-            .foregroundStyle(level < 20 && !charging ? Theme.rose : Theme.slate)
-            .contentTransition(.numericText())
-            .accessibilityLabel("Battery \(level) percent\(charging ? ", charging" : "")")
+        VStack(spacing: 1) {
+            Image(systemName: Self.symbol(level: level, charging: charging))
+                .font(.subheadline)
+                .symbolRenderingMode(.hierarchical)
+            Text("\(level)%")
+                .font(.caption2.weight(.semibold).monospacedDigit())
+                .contentTransition(.numericText())
+        }
+        .foregroundStyle(level < 20 && !charging ? Theme.rose : Theme.ink)
+        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
+        .fixedSize()
+        .padding(.trailing, 6)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Battery \(level) percent\(charging ? ", charging" : "")")
     }
 }
 

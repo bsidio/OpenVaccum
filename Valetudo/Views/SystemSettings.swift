@@ -87,16 +87,6 @@ struct UpdaterView: View {
             }
         }
         .settingsPage("Updates")
-        .confirmationDialog("Download \(newVersion)?", isPresented: $confirmDownload, titleVisibility: .visible) {
-            Button("Download Update") { send("download", done: "Download started") }
-        } message: {
-            Text("Read the release notes first. They can include changes that need work from you.")
-        }
-        .confirmationDialog("Install \(newVersion)?", isPresented: $confirmInstall, titleVisibility: .visible) {
-            Button("Install Update") { install() }
-        } message: {
-            Text("The robot may restart while this runs, and you can't reach it until it's back. Any update can need some troubleshooting afterwards.")
-        }
         .task(id: attempt) {
             await SettingsLoad.keepFresh(every: 2, phase: $phase) {
                 state = try await store.client.settingsDocument("/updater/state")
@@ -211,9 +201,19 @@ struct UpdaterView: View {
         } else if kind.contains("ApprovalPending") {
             SettingsActionButton("Download Update", busy: isBusy) { confirmDownload = true }
                 .disabled(isBusy)
+                .confirmationDialog("Download \(newVersion)?", isPresented: $confirmDownload, titleVisibility: .visible) {
+                    Button("Download Update") { send("download", done: "Download started") }
+                } message: {
+                    Text("Read the release notes first. They can include changes that need work from you.")
+                }
         } else if isReadyToInstall {
             SettingsActionButton("Install Update", busy: isBusy) { confirmInstall = true }
                 .disabled(isBusy)
+                .confirmationDialog("Install \(newVersion)?", isPresented: $confirmInstall, titleVisibility: .visible) {
+                    Button("Install Update") { install() }
+                } message: {
+                    Text("The robot may restart while this runs, and you can't reach it until it's back. Any update can need some troubleshooting afterwards.")
+                }
         } else if !isDownloading, !kind.contains("Disabled") {
             SettingsActionButton("Check for Updates", busy: isBusy) {
                 send("check", done: "Checking for updates")
@@ -910,7 +910,6 @@ struct LogView: View {
 struct AboutView: View {
     private static let website = URL(string: "https://valetudo.cloud")!
     private static let sourceCode = URL(string: "https://github.com/Hypfer/Valetudo")!
-    private static let donate = URL(string: "https://github.com/sponsors/Hypfer")!
     private static let license = URL(string: "https://github.com/Hypfer/Valetudo/blob/master/LICENSE")!
     private static let appIssues = URL(string: "https://github.com/bsidio/valetudo-ios/issues")!
 
@@ -929,8 +928,9 @@ struct AboutView: View {
                 LabeledContent("Version", value: appVersion)
                 NavigationLink("Third-Party Notices") { NoticesView() }
                 SettingsLinkRow("Report a Problem With This App", "exclamationmark.bubble.fill", .orange, url: Self.appIssues)
+                SettingsLinkRow("Privacy Policy", "hand.raised.fill", .blue, url: AppLinks.privacyPolicy)
             } header: {
-                Text("Valetudo for iOS")
+                Text("OpenVacuum")
             } footer: {
                 Text("This is an unofficial app and isn't affiliated with the Valetudo project. It talks only to your robot, with no account, cloud service or tracking.")
             }
@@ -938,7 +938,6 @@ struct AboutView: View {
                 SettingsLinkRow("Documentation", "book.fill", .blue, url: Self.website)
                 SettingsLinkRow("Source Code", "chevron.left.forwardslash.chevron.right", .indigo, url: Self.sourceCode)
                 SettingsLinkRow("License", "doc.text.fill", .brown, url: Self.license)
-                SettingsLinkRow("Donate", "heart.fill", .pink, url: Self.donate)
                 if let url = URL(string: "\(store.client.baseURL)/swagger/") {
                     SettingsLinkRow("API Reference", "curlybraces", .teal, url: url)
                 }

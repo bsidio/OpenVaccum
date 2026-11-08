@@ -96,7 +96,9 @@ final class CameraStream: NSObject {
     enum Phase: Equatable { case connecting, live, failed(String) }
 
     /// Valetudo backs off for a minute after the camera fails, so retrying sooner can't help.
-    private static let noVideo = "No video from the robot. Some robots can only stream while they're away from the dock."
+    static let noVideo = "No video from the robot. Some robots can only stream while they're away from the dock."
+    /// Valetudo waits this long after the camera fails before it will try the camera again.
+    static let backoff: TimeInterval = 61
 
     private(set) var frame: CGImage?
     private(set) var phase: Phase = .connecting
@@ -108,6 +110,7 @@ final class CameraStream: NSObject {
     private var stopped = true
     private var receivedFrame = false
     private var reconnect: Task<Void, Never>?
+    private var failedAt: Date?
     @ObservationIgnored private nonisolated(unsafe) var demuxer = TransportDemuxer()
     @ObservationIgnored private nonisolated(unsafe) var decoder: FrameDecoder?
 
@@ -123,6 +126,7 @@ final class CameraStream: NSObject {
         }
         reconnect?.cancel()
         reconnect = nil
+        failedAt = nil
         stopped = false
         receivedFrame = false
         phase = .connecting
@@ -139,6 +143,22 @@ final class CameraStream: NSObject {
         self.session = session
         task = session.dataTask(with: request)
         task?.resume()
+    }
+
+    /// True when the robot sent no video at all, which on some robots means it's still docked.
+    var hasNoVideo: Bool { phase == .failed(Self.noVideo) }
+
+    /// The robot has just left its dock: try again as soon as Valetudo allows, so the owner
+    /// doesn't have to notice and tap Try Again.
+    func retryAfterLeavingDock() {
+        guard hasNoVideo else { return }
+        let wait = max(0, Self.backoff - Date().timeIntervalSince(failedAt ?? .distantPast))
+        phase = .connecting
+        reconnect?.cancel()
+        reconnect = Task {
+            try? await Task.sleep(for: .seconds(wait))
+            if !Task.isCancelled { self.start() }
+        }
     }
 
     func stop() {
@@ -159,6 +179,7 @@ final class CameraStream: NSObject {
         guard !stopped else { return }
         let hadVideo = receivedFrame
         endConnection()
+        failedAt = Date()
         switch status {
         case 403:
             phase = .failed("The robot has stopped the video.")

@@ -275,24 +275,6 @@ struct MapEditorView: View {
                 Text(canModify ? "Your changes to this floor plan haven't been saved."
                                : "They can't be saved until the robot is back on its dock.")
             }
-            .confirmationDialog("Start a mapping pass?", isPresented: $confirmMapping, titleVisibility: .visible) {
-                Button("Run a Mapping Pass") { store.startMappingPass() }
-            } message: {
-                Text("The robot drives around your home to make a new floor plan.")
-            }
-            .confirmationDialog("Erase this floor plan?", isPresented: $confirmReset, titleVisibility: .visible) {
-                Button("Erase Floor Plan", role: .destructive) { replacePlan(Cap.mapReset, ["action": "reset"], "Floor plan erased") }
-            } message: {
-                Text(eraseMessage)
-            }
-            .confirmationDialog("Restore this backup?", isPresented: Binding(
-                get: { restoring != nil }, set: { if !$0 { restoring = nil } }), titleVisibility: .visible, presenting: restoring) { backup in
-                Button("Restore Backup", role: .destructive) {
-                    replacePlan(Cap.mapSnapshot, ["action": "restore", "id": backup.id], "Backup restored")
-                }
-            } message: { backup in
-                Text(restoreMessage(backup))
-            }
     }
 
     // MARK: Plan
@@ -974,6 +956,25 @@ struct MapEditorView: View {
             Image(systemName: "ellipsis")
         }
         .accessibilityLabel("Floor Plan Actions")
+        // On the menu's button, so each dialog points at where it was chosen.
+        .confirmationDialog("Start a mapping pass?", isPresented: $confirmMapping, titleVisibility: .visible) {
+            Button("Run a Mapping Pass") { store.startMappingPass() }
+        } message: {
+            Text("The robot drives around your home to make a new floor plan.")
+        }
+        .confirmationDialog("Erase this floor plan?", isPresented: $confirmReset, titleVisibility: .visible) {
+            Button("Erase Floor Plan", role: .destructive) { replacePlan(Cap.mapReset, ["action": "reset"], "Floor plan erased") }
+        } message: {
+            Text(eraseMessage)
+        }
+        .confirmationDialog("Restore this backup?", isPresented: Binding(
+            get: { restoring != nil }, set: { if !$0 { restoring = nil } }), titleVisibility: .visible, presenting: restoring) { backup in
+            Button("Restore Backup", role: .destructive) {
+                replacePlan(Cap.mapSnapshot, ["action": "restore", "id": backup.id], "Backup restored")
+            }
+        } message: { backup in
+            Text(restoreMessage(backup))
+        }
     }
 
     // MARK: Panel

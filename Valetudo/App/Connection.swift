@@ -5,7 +5,7 @@ import Observation
 import Security
 
 /// The saved robot. The password lives in the Keychain, never in UserDefaults.
-struct Connection: Codable {
+struct Connection: Codable, Equatable {
     var baseURL: String
     var username: String?
 
@@ -19,15 +19,17 @@ struct Connection: Codable {
         return saved
     }
 
+    /// Makes this the robot the app opens, and keeps it in the list of saved robots.
     func save() {
         if let data = try? JSONEncoder().encode(self) {
             UserDefaults.standard.set(data, forKey: Self.key)
         }
+        RobotList.keep(self)
     }
 
+    /// Forgets which robot is open. The list of saved robots is left alone.
     static func clear() {
         UserDefaults.standard.removeObject(forKey: key)
-        UserDefaults.standard.removeObject(forKey: fallbackKey)
     }
 
     /// The robot's other address, for when the saved one stops answering.
@@ -36,8 +38,11 @@ struct Connection: Codable {
         (UserDefaults.standard.dictionary(forKey: fallbackKey) as? [String: String])?[baseURL]
     }
 
-    static func setFallback(_ fallback: String, for baseURL: String) {
-        UserDefaults.standard.set([baseURL: fallback], forKey: fallbackKey)
+    /// Each saved robot keeps its own, so adding a robot doesn't lose another's.
+    static func setFallback(_ fallback: String?, for baseURL: String) {
+        var all = UserDefaults.standard.dictionary(forKey: fallbackKey) as? [String: String] ?? [:]
+        all[baseURL] = fallback
+        UserDefaults.standard.set(all, forKey: fallbackKey)
     }
 
     /// Accepts "192.168.1.20", "robot.lan:8080", or a full http(s) URL.
@@ -71,10 +76,97 @@ struct Connection: Codable {
         let typed = Self.login(in: baseURL)
         let password = Keychain.password(for: baseURL) ?? typed?.password
         if Keychain.setPassword(password, for: clean) { Keychain.setPassword(nil, for: baseURL) }
+        RobotList.forget(baseURL)
         username = username ?? typed?.username
         baseURL = clean
         save()
     }
+}
+
+/// A robot this phone has connected to, so the owner can switch between several.
+struct SavedRobot: Codable, Equatable, Identifiable {
+    var connection: Connection
+    /// The robot's own name, from the last time it was open.
+    var name: String?
+    var favorite = false
+
+    var id: String { connection.baseURL }
+
+    /// The address without the scheme, which is what people recognise.
+    var address: String {
+        connection.baseURL.replacingOccurrences(of: "http://", with: "").replacingOccurrences(of: "https://", with: "")
+    }
+
+    var title: String {
+        let trimmed = name?.trimmingCharacters(in: .whitespaces) ?? ""
+        return trimmed.isEmpty ? address : trimmed
+    }
+}
+
+/// The robots saved on this phone. Passwords stay in the keychain, filed by address.
+enum RobotList {
+    private static let key = "robots"
+
+    /// Favourites first, then by name.
+    static func all() -> [SavedRobot] {
+        var robots = stored()
+        // Builds before this list kept only one robot.
+        if robots.isEmpty, let current = Connection.load() {
+            robots = [SavedRobot(connection: current)]
+            store(robots)
+        }
+        return robots.sorted {
+            if $0.favorite != $1.favorite { return $0.favorite }
+            return $0.title.localizedStandardCompare($1.title) == .orderedAscending
+        }
+    }
+
+    static func keep(_ connection: Connection) {
+        var robots = stored()
+        if let i = robots.firstIndex(where: { $0.id == connection.baseURL }) {
+            robots[i].connection = connection
+        } else {
+            robots.append(SavedRobot(connection: connection))
+        }
+        store(robots)
+    }
+
+    /// Forgets the robot, its password and its other address.
+    static func forget(_ baseURL: String) {
+        store(stored().filter { $0.id != baseURL })
+        Keychain.setPassword(nil, for: baseURL)
+        Connection.setFallback(nil, for: baseURL)
+    }
+
+    static func setName(_ name: String, for baseURL: String) {
+        update(baseURL) { $0.name = name }
+    }
+
+    static func setFavorite(_ favorite: Bool, for baseURL: String) {
+        update(baseURL) { $0.favorite = favorite }
+    }
+
+    private static func update(_ baseURL: String, _ change: (inout SavedRobot) -> Void) {
+        var robots = stored()
+        guard let i = robots.firstIndex(where: { $0.id == baseURL }) else { return }
+        let before = robots[i]
+        change(&robots[i])
+        if robots[i] != before { store(robots) }
+    }
+
+    private static func stored() -> [SavedRobot] {
+        guard let data = UserDefaults.standard.data(forKey: key) else { return [] }
+        return (try? JSONDecoder().decode([SavedRobot].self, from: data)) ?? []
+    }
+
+    private static func store(_ robots: [SavedRobot]) {
+        if let data = try? JSONEncoder().encode(robots) { UserDefaults.standard.set(data, forKey: key) }
+    }
+}
+
+/// Pages about the app itself, in its public repository.
+enum AppLinks {
+    static let privacyPolicy = URL(string: "https://github.com/bsidio/valetudo-ios/blob/main/PRIVACY.md")!
 }
 
 enum Keychain {

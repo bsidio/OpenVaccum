@@ -528,3 +528,22 @@ struct PlanTransform {
     func toView(_ p: CGPoint) -> CGPoint { CGPoint(x: p.x * scale + offset.x, y: p.y * scale + offset.y) }
     func toMap(_ p: CGPoint) -> CGPoint { CGPoint(x: (p.x - offset.x) / scale, y: (p.y - offset.y) / scale) }
 }
+
+extension FloorPlan {
+    /// Where a room clean is happening, for the headline: the room the robot is in when that's
+    /// one of the job's rooms, otherwise the job's rooms themselves. Nil when the map can't say.
+    var cleaningWhere: String? {
+        let job = rooms.filter(\.active)
+        let named = { (room: Room) -> String? in
+            let name = room.name.trimmingCharacters(in: .whitespaces)
+            return name.isEmpty ? nil : name
+        }
+        // Some robots flag every room in the job, so the robot's position says which it's in.
+        if let robot, let here = job.first(where: { $0.path.contains(robot) }), let name = named(here) {
+            return name
+        }
+        let names = job.compactMap(named)
+        guard !names.isEmpty, names.count == job.count else { return job.count > 1 ? "\(job.count) rooms" : nil }
+        return names.count <= 2 ? names.formatted(.list(type: .and)) : "\(names.count) rooms"
+    }
+}

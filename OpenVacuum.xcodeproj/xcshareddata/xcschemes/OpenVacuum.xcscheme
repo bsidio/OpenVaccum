@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4AFFF00CF85987926DB8E8AA"
-               BuildableName = "Valetudo.app"
-               BlueprintName = "Valetudo"
-               ReferencedContainer = "container:Valetudo.xcodeproj">
+               BlueprintIdentifier = "B3395CF1524FA558518A0803"
+               BuildableName = "OpenVacuum.app"
+               BlueprintName = "OpenVacuum"
+               ReferencedContainer = "container:OpenVacuum.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4AFFF00CF85987926DB8E8AA"
-            BuildableName = "Valetudo.app"
-            BlueprintName = "Valetudo"
-            ReferencedContainer = "container:Valetudo.xcodeproj">
+            BlueprintIdentifier = "B3395CF1524FA558518A0803"
+            BuildableName = "OpenVacuum.app"
+            BlueprintName = "OpenVacuum"
+            ReferencedContainer = "container:OpenVacuum.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -44,10 +44,10 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B6D71D317C48BD38289D85A9"
-               BuildableName = "ValetudoTests.xctest"
-               BlueprintName = "ValetudoTests"
-               ReferencedContainer = "container:Valetudo.xcodeproj">
+               BlueprintIdentifier = "ABA56B37EB231CF34F2DC35B"
+               BuildableName = "OpenVacuumTests.xctest"
+               BlueprintName = "OpenVacuumTests"
+               ReferencedContainer = "container:OpenVacuum.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -68,10 +68,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4AFFF00CF85987926DB8E8AA"
-            BuildableName = "Valetudo.app"
-            BlueprintName = "Valetudo"
-            ReferencedContainer = "container:Valetudo.xcodeproj">
+            BlueprintIdentifier = "B3395CF1524FA558518A0803"
+            BuildableName = "OpenVacuum.app"
+            BlueprintName = "OpenVacuum"
+            ReferencedContainer = "container:OpenVacuum.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -85,10 +85,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4AFFF00CF85987926DB8E8AA"
-            BuildableName = "Valetudo.app"
-            BlueprintName = "Valetudo"
-            ReferencedContainer = "container:Valetudo.xcodeproj">
+            BlueprintIdentifier = "B3395CF1524FA558518A0803"
+            BuildableName = "OpenVacuum.app"
+            BlueprintName = "OpenVacuum"
+            ReferencedContainer = "container:OpenVacuum.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

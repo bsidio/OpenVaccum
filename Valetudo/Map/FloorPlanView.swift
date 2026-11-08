@@ -4,12 +4,17 @@ import SwiftUI
 /// The floor plan editor adds its layers through `overlay`. Home passes `touches` instead:
 /// UIKit then takes every touch, and picks draw in `pickLayer`, above the map's filters.
 struct PlanCanvas: View {
+    /// How the robot's path is drawn: thin lines while it only vacuums, a soft band as wide as
+    /// the robot while it mops, which shows the floor it has wiped.
+    enum TrailStyle: Equatable { case lines, band }
+
     let plan: FloorPlan
     var selected: Set<String> = []
     var active = false
     /// Keeps the rooms of an unfinished job marked, though the robot isn't moving.
     var paused = false
     var showsRobot = true
+    var trailStyle = TrailStyle.band
     /// Restrictions, annotations and what the robot is working on. The editor turns these off
     /// because it draws its own copies, and until they're saved those can differ from the plan.
     var showsRestrictions = true
@@ -134,6 +139,19 @@ struct PlanCanvas: View {
 
     /// Roughly how wide a robot cleans, in centimetres.
     private static let cleaningWidth: CGFloat = 30
+
+    /// `map` draws in map pixels, and `pointSize` is one screen point in those pixels.
+    static func drawTrail(of plan: FloorPlan, style: TrailStyle, in map: GraphicsContext, pointSize: CGFloat, strong: Bool) {
+        switch style {
+        case .lines:
+            map.stroke(plan.trail, with: .color(Theme.cobalt.opacity(strong ? 0.9 : 0.65)),
+                       style: StrokeStyle(lineWidth: (strong ? 1.8 : 1.3) * pointSize, lineCap: .round, lineJoin: .round))
+        case .band:
+            // About as wide as the robot, so it shows the floor it has covered.
+            map.stroke(plan.trail, with: .color(Theme.cobalt.opacity(strong ? 0.22 : 0.12)),
+                       style: StrokeStyle(lineWidth: cleaningWidth / plan.pixelSize, lineCap: .round, lineJoin: .round))
+        }
+    }
     /// How far in a room's label gains its second line.
     private static let detailZoom: CGFloat = 2.5
 
@@ -195,9 +213,7 @@ struct PlanCanvas: View {
         }
         Self.drawCarpets(of: plan, in: context, t)
 
-        // The band is about as wide as the robot, so it shows the floor it has covered.
-        map.stroke(plan.trail, with: .color(Theme.cobalt.opacity(strong ? 0.35 : 0.2)),
-                   style: StrokeStyle(lineWidth: Self.cleaningWidth / plan.pixelSize, lineCap: .round, lineJoin: .round))
+        Self.drawTrail(of: plan, style: trailStyle, in: map, pointSize: 1 / t.scale, strong: strong)
         smooth(plan.walls, Theme.wall, cut: 0.36, softness: softness * 0.6, in: context, t)
         map.stroke(plan.predicted, with: .color(Theme.cobalt.opacity(strong ? 1 : 0.7)),
                    style: StrokeStyle(lineWidth: 1.6 / t.scale, lineCap: .round, dash: [5 / t.scale, 5 / t.scale]))
@@ -227,7 +243,7 @@ struct PlanCanvas: View {
             let box = Path(roundedRect: CGRect(x: p.x - 9, y: p.y - 9, width: 18, height: 18), cornerRadius: 5)
             context.fill(box, with: .color(Theme.floor))
             context.stroke(box, with: .color(Theme.wall), lineWidth: 2)
-            context.draw(Text(Image(systemName: "bolt.fill")).font(.system(size: 10)).foregroundStyle(Theme.wall), at: p)
+            DockGlyph.draw(in: context, rect: CGRect(x: p.x - 6, y: p.y - 6, width: 12, height: 12), color: Theme.wall)
         }
     }
 

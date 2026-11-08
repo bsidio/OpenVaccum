@@ -79,6 +79,7 @@ struct ControlsSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
                     modeSection
+                    routeSection
                     // Only what the current mode uses: mopping alone has no suction, and so on.
                     if store.state.mode != "mop" { powerSection(.fan) }
                     if store.state.mode != "vacuum" { powerSection(.water) }
@@ -141,6 +142,20 @@ struct ControlsSheet: View {
                             ModeIcon(mode: mode)
                         }
                     }
+                }
+            }
+        }
+    }
+
+    /// How thoroughly the robot goes over the floor, beside the mode as in robot makers' own apps.
+    @ViewBuilder private var routeSection: some View {
+        if let route = store.choices[.cleanRoute], route.options.count > 1 {
+            let options = ChoiceSetting.cleanRoute.sorted(route.options)
+            VStack(alignment: .leading, spacing: 10) {
+                ControlHeading(title: ChoiceSetting.cleanRoute.title,
+                               value: options.contains(route.value) ? nil : ChoiceSetting.cleanRoute.label(route.value))
+                SlidingPicker(options: options, selection: route.value, title: ChoiceSetting.cleanRoute.label) {
+                    store.set(.cleanRoute, to: $0)
                 }
             }
         }
@@ -280,14 +295,6 @@ struct AlertsSheet: View {
                 ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
             }
             .modifier(ToastHost(toast: store.toast))
-            .confirmationDialog("Reset this counter?", isPresented: Binding(
-                get: { confirming != nil }, set: { if !$0 { confirming = nil } }), titleVisibility: .visible) {
-                Button("Reset Counter") {
-                    if let confirming { answer(confirming, with: "reset") }
-                }
-            } message: {
-                Text("This restarts the countdown, so do the upkeep first.")
-            }
         }
         .presentationDetents([.medium, .large])
     }
@@ -323,6 +330,13 @@ struct AlertsSheet: View {
                     switch event.style {
                     case .consumable:
                         Button("Mark as Done") { confirming = event }
+                            .confirmationDialog("Reset this counter?", isPresented: Binding(
+                                get: { confirming?.id == event.id }, set: { if !$0 { confirming = nil } }),
+                                                titleVisibility: .visible) {
+                                Button("Reset Counter") { answer(event, with: "reset") }
+                            } message: {
+                                Text("This restarts the countdown, so do the upkeep first.")
+                            }
                     case .pendingMap:
                         Button("Use New Plan") { answer(event, with: "yes") }
                         Button("Keep Current") { answer(event, with: "no") }

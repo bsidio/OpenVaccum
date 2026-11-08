@@ -123,6 +123,8 @@ struct RobotState: Equatable {
     var isActive: Bool { ["cleaning", "returning", "moving", "manual_control"].contains(status ?? "") }
     var isPaused: Bool { status == "paused" }
     var mopAttached: Bool { attachments["mop"] == true }
+    /// Whether the robot mops in its current mode. Robots without modes mop when a mop is attached.
+    var mops: Bool { mode.map { $0.contains("mop") } ?? mopAttached }
 
     // When each command applies, by Valetudo's own rules. `isActive` means something else:
     // manual control counts as active, but there's no pausing it.

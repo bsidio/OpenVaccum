@@ -69,6 +69,18 @@ struct ConnectView: View {
                 ScrollView {
                     VStack(spacing: 28) {
                         hero
+                        // After moving one robot to another network, the others are still a tap away.
+                        if session.store == nil, !session.robots.isEmpty {
+                            Menu {
+                                ForEach(session.robots) { robot in
+                                    Button(robot.title) { session.switchTo(robot) }
+                                }
+                            } label: {
+                                Label("Open a Saved Robot", systemImage: "list.bullet")
+                            }
+                            .buttonStyle(.bordered)
+                            .buttonBorderShape(.capsule)
+                        }
                         if !searching {
                             robotList.transition(reveal)
                         } else if showHelp || problem != nil {
@@ -252,6 +264,10 @@ struct ConnectView: View {
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
             Link("Report a Problem With This App", destination: Self.issues)
+                .font(.subheadline.weight(.medium))
+                .frame(minHeight: Metric.hitTarget)
+            // Here as well as in About, because About can't be reached without a robot.
+            Link("Privacy Policy", destination: AppLinks.privacyPolicy)
                 .font(.subheadline.weight(.medium))
                 .frame(minHeight: Metric.hitTarget)
         }

@@ -1,6 +1,6 @@
 import SwiftUI
 import XCTest
-@testable import Valetudo
+@testable import OpenVacuum
 
 /// A map as the robot sends one: rooms as runs of pixels, entities in centimetres, at 5 cm a pixel.
 private enum Sketch {
@@ -1062,4 +1062,30 @@ private struct Bitmap: Equatable, CustomStringConvertible {
 
     /// A failed comparison would otherwise print every byte.
     var description: String { "\(width) by \(height) image" }
+}
+
+final class CleaningWhereTests: XCTestCase {
+    private let rooms = [Sketch.Room(id: "1", rect: CGRect(x: 0, y: 0, width: 20, height: 20), active: true),
+                         Sketch.Room(id: "2", rect: CGRect(x: 20, y: 0, width: 20, height: 20), active: true),
+                         Sketch.Room(id: "3", rect: CGRect(x: 40, y: 0, width: 20, height: 20))]
+
+    func testTheRoomTheRobotIsInIsNamed() throws {
+        // Entities are in centimetres: 150 cm is pixel 30, inside room 2.
+        let plan = try Sketch.plan(rooms, entities: [Sketch.entity("robot_position", [150, 50])])
+        XCTAssertEqual(plan.cleaningWhere, "Room 2")
+    }
+
+    func testWithTheRobotOutsideTheJobTheJobsRoomsAreNamed() throws {
+        let plan = try Sketch.plan(rooms, entities: [Sketch.entity("robot_position", [250, 50])])
+        XCTAssertEqual(plan.cleaningWhere, "Room 1 and Room 2")
+    }
+
+    func testManyRoomsAreCounted() throws {
+        let all = rooms.map { var room = $0; room.active = true; return room }
+        XCTAssertEqual(try Sketch.plan(all).cleaningWhere, "3 rooms")
+    }
+
+    func testNoMarkedRoomsLeavesItToTheCaller() throws {
+        XCTAssertNil(try Sketch.plan([Sketch.room]).cleaningWhere)
+    }
 }
