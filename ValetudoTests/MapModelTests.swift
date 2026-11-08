@@ -455,3 +455,17 @@ final class RobotListTests: XCTestCase {
         XCTAssertEqual(RobotList.all().map(\.id), ["http://old.lan"])
     }
 }
+
+final class AlertAdviceTests: XCTestCase {
+    func testCommonErrorsGetAdvice() {
+        XCTAssertNotNil(RobotEvent.advice(for: "Wheel lost floor contact"))
+        XCTAssertEqual(RobotEvent.advice(for: "Mop Dock Clean Water Tank empty"), "Refill the clean water tank, then dismiss this.")
+        XCTAssertTrue(RobotEvent.advice(for: "Robot trapped by virtual restrictions")?.contains("no-go") == true)
+        XCTAssertNil(RobotEvent.advice(for: "3.3V rail abnormal"), "faults with nothing to try get no advice")
+    }
+
+    func testDockSuppliesAreChores() {
+        XCTAssertTrue(RobotEvent.isDockChore("Mop Dock Clean Water Tank empty"))
+        XCTAssertFalse(RobotEvent.isDockChore("Wheel lost floor contact"))
+    }
+}

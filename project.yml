@@ -14,7 +14,7 @@ targets:
       properties:
         CFBundleDisplayName: OpenVacuum
         CFBundleShortVersionString: "1.0"
-        CFBundleVersion: "5"
+        CFBundleVersion: "6"
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         NSLocalNetworkUsageDescription: This app finds and controls your Valetudo robot on your home network.

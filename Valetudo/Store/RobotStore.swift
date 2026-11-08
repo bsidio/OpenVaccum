@@ -944,6 +944,21 @@ final class RobotStore {
 
     /// Waits until the list is up to date, so a screen can hold the row's buttons until then:
     /// the robot refuses a second answer to the same event.
+    /// Answers several at once, as when a repeated alert is dismissed, and reloads once.
+    func answer(_ events: [RobotEvent], with reply: String) async {
+        guard events.count > 1 else {
+            if let event = events.first { await answer(event, with: reply) }
+            return
+        }
+        let client = client
+        _ = await attempt {
+            for event in events {
+                try await client.put("/events/\(event.id)/interact", ["interaction": reply])
+            }
+            await self.loadDetails()
+        }
+    }
+
     func answer(_ event: RobotEvent, with reply: String) async {
         let client = client
         _ = await attempt {

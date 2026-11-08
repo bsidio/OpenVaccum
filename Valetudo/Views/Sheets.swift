@@ -258,18 +258,22 @@ struct AlertsSheet: View {
     @State private var answering: Set<String> = []
 
     private var earlierEvents: [RobotEvent] { store.events.filter(\.processed) }
+    private var openGroups: [AlertGroup] { AlertGroup.grouping(store.openEvents) }
+    private var earlierGroups: [AlertGroup] { AlertGroup.grouping(earlierEvents) }
+    /// Plain alerts that only need acknowledging. Parts and new floor plans each ask something.
+    private var dismissable: [RobotEvent] { store.openEvents.filter { $0.style == .dismiss } }
 
     var body: some View {
         NavigationStack {
             List {
-                if !store.openEvents.isEmpty {
+                if !openGroups.isEmpty {
                     Section("Needs Attention") {
-                        ForEach(store.openEvents, content: row)
+                        ForEach(openGroups, content: row)
                     }
                 }
-                if !earlierEvents.isEmpty {
+                if !earlierGroups.isEmpty {
                     Section("Earlier") {
-                        ForEach(earlierEvents, content: row)
+                        ForEach(earlierGroups, content: row)
                     }
                 }
             }
@@ -289,9 +293,16 @@ struct AlertsSheet: View {
                     }
                 }
             }
+            .animation(.snappy(duration: 0.25), value: store.events.map(\.id))
             .navigationTitle("Alerts")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                if dismissable.count > 1 {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Dismiss All") { answer(dismissable, with: "ok") }
+                            .disabled(!answering.isEmpty)
+                    }
+                }
                 ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
             }
             .modifier(ToastHost(toast: store.toast))
@@ -299,15 +310,16 @@ struct AlertsSheet: View {
         .presentationDetents([.medium, .large])
     }
 
-    private func row(_ event: RobotEvent) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 12) {
+    private func row(_ group: AlertGroup) -> some View {
+        let event = group.latest
+        let busy = group.events.contains { answering.contains($0.id) }
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top, spacing: 12) {
                 IconTile(symbol: Self.symbol(for: event), color: Self.color(for: event))
                     .opacity(event.processed ? 0.5 : 1)
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(event.title)
                         .font(.body.weight(.medium))
-                        .strikethrough(event.processed)
                         .foregroundStyle(event.processed ? Theme.slate : Theme.ink)
                         .fixedSize(horizontal: false, vertical: true)
                     if let detail = detail(for: event) {
@@ -316,54 +328,82 @@ struct AlertsSheet: View {
                             .foregroundStyle(Theme.slate)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    // A robot clock running ahead of the phone's shouldn't read as the future.
-                    if let date = event.date {
-                        Text(min(date, .now), format: .relative(presentation: .named))
-                            .font(.footnote)
-                            .foregroundStyle(Theme.slate)
-                    }
+                    when(group)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                // One small button beside the alert, so the list stays short.
+                if !event.processed, event.style == .dismiss {
+                    Button("Dismiss") { answer(group.events, with: "ok") }
+                        .buttonStyle(.bordered)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.small)
+                        .disabled(busy)
+                        .accessibilityLabel(group.events.count > 1 ? "Dismiss all \(group.events.count)" : "Dismiss")
+                } else if !event.processed, event.style == .consumable {
+                    Button("Mark Done") { confirming = event }
+                        .buttonStyle(.bordered)
+                        .buttonBorderShape(.capsule)
+                        .controlSize(.small)
+                        .disabled(busy)
+                        .accessibilityLabel("Mark as Done")
+                        .confirmationDialog("Reset this counter?", isPresented: Binding(
+                            get: { confirming?.id == event.id }, set: { if !$0 { confirming = nil } }),
+                                            titleVisibility: .visible) {
+                            Button("Reset Counter") { answer(group.events, with: "reset") }
+                        } message: {
+                            Text("This restarts the countdown, so do the upkeep first.")
+                        }
                 }
             }
             .accessibilityElement(children: .combine)
-            if !event.processed {
+            if !event.processed, event.style == .pendingMap {
                 HStack(spacing: 8) {
-                    switch event.style {
-                    case .consumable:
-                        Button("Mark as Done") { confirming = event }
-                            .confirmationDialog("Reset this counter?", isPresented: Binding(
-                                get: { confirming?.id == event.id }, set: { if !$0 { confirming = nil } }),
-                                                titleVisibility: .visible) {
-                                Button("Reset Counter") { answer(event, with: "reset") }
-                            } message: {
-                                Text("This restarts the countdown, so do the upkeep first.")
-                            }
-                    case .pendingMap:
-                        Button("Use New Plan") { answer(event, with: "yes") }
-                        Button("Keep Current") { answer(event, with: "no") }
-                    case .dismiss:
-                        Button("Dismiss") { answer(event, with: "ok") }
-                    }
+                    Button("Use New Plan") { answer([event], with: "yes") }
+                    Button("Keep Current") { answer([event], with: "no") }
                 }
-                .disabled(answering.contains(event.id))
+                .disabled(busy)
                 .buttonStyle(.bordered)
                 .buttonBorderShape(.capsule)
-                .controlSize(.large)
+                .controlSize(.regular)
+                .padding(.leading, 48)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 2)
         .listRowBackground(Theme.paper)
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            if !event.processed, event.style == .dismiss {
+                Button { answer(group.events, with: "ok") } label: { Label("Dismiss", systemImage: "checkmark") }
+                    .tint(.blue)
+            }
+        }
     }
 
-    private func answer(_ event: RobotEvent, with reply: String) {
-        answering.insert(event.id)
+    /// When, and how often if it kept happening.
+    @ViewBuilder private func when(_ group: AlertGroup) -> some View {
+        let count = group.events.count
+        // A robot clock running ahead of the phone's shouldn't read as the future.
+        if let date = group.latest.date {
+            (Text(count > 1 ? "\(count) times, latest " : "")
+                + Text(min(date, .now), format: .relative(presentation: .named)))
+                .font(.footnote)
+                .foregroundStyle(Theme.slate)
+        } else if count > 1 {
+            Text("\(count) times").font(.footnote).foregroundStyle(Theme.slate)
+        }
+    }
+
+    private func answer(_ events: [RobotEvent], with reply: String) {
+        let ids = events.map(\.id)
+        answering.formUnion(ids)
         Task {
-            await store.answer(event, with: reply)
-            answering.remove(event.id)
+            await store.answer(events, with: reply)
+            answering.subtract(ids)
         }
     }
 
     /// The robot's own description is memory figures, so the one reason it reports gets plain words.
     private func detail(for event: RobotEvent) -> String? {
+        if event.kind == "ErrorStateValetudoEvent" { return RobotEvent.advice(for: event.message ?? event.title) }
         guard event.kind == "ValetudoRuntimeErrorValetudoEvent" else { return nil }
         return event.reason == "memory_usage" ? "It was using too much memory." : event.description
     }
@@ -382,7 +422,12 @@ struct AlertsSheet: View {
         case "DustBinFullValetudoEvent": return "trash.fill"
         case "MopAttachmentReminderValetudoEvent": return "drop.fill"
         case "PendingMapChangeValetudoEvent": return "map.fill"
-        case "ErrorStateValetudoEvent", "ValetudoRuntimeErrorValetudoEvent": return "exclamationmark.triangle.fill"
+        case "ErrorStateValetudoEvent":
+            let text = (event.message ?? "").lowercased()
+            if text.contains("water tank") || text.contains("water box") { return "drop.fill" }
+            if text.contains("dust") || text.contains("bin") || text.contains("bag") { return "trash.fill" }
+            return "exclamationmark.triangle.fill"
+        case "ValetudoRuntimeErrorValetudoEvent": return "exclamationmark.triangle.fill"
         case "ValetudoUpdatedValetudoEvent": return "arrow.down.circle.fill"
         default: return "bell.fill"
         }
@@ -390,11 +435,34 @@ struct AlertsSheet: View {
 
     private static func color(for event: RobotEvent) -> Color {
         switch event.kind {
-        case "ErrorStateValetudoEvent", "ValetudoRuntimeErrorValetudoEvent": return .red
+        case "ErrorStateValetudoEvent":
+            // Dock supplies are chores, not faults.
+            let text = (event.message ?? "").lowercased()
+            return RobotEvent.isDockChore(text) ? .orange : .red
+        case "ValetudoRuntimeErrorValetudoEvent": return .red
         case "PendingMapChangeValetudoEvent", "ValetudoUpdatedValetudoEvent": return .blue
         case "MopAttachmentReminderValetudoEvent": return .cyan
         default: return .orange
         }
+    }
+}
+
+/// Alerts with the same title, newest first, so a robot repeating itself takes one row.
+private struct AlertGroup: Identifiable {
+    let events: [RobotEvent]
+    var latest: RobotEvent { events[0] }
+    var id: String { latest.id }
+
+    static func grouping(_ events: [RobotEvent]) -> [AlertGroup] {
+        var order: [String] = []
+        var byKey: [String: [RobotEvent]] = [:]
+        for event in events.sorted(by: { ($0.date ?? .distantPast) > ($1.date ?? .distantPast) }) {
+            // A new floor plan is a question of its own, never merged.
+            let key = event.style == .pendingMap ? event.id : event.kind + "|" + event.title
+            if byKey[key] == nil { order.append(key) }
+            byKey[key, default: []].append(event)
+        }
+        return order.map { AlertGroup(events: byKey[$0]!) }
     }
 }
 

@@ -491,3 +491,49 @@ enum RobotTime {
         shift(days: days, hour: hour, minute: minute, byMinutes: -offsetMinutes)
     }
 }
+
+extension RobotEvent {
+    /// What to do about the robot's most common errors, in plain words. Valetudo's messages
+    /// differ between robot families, so these match on words rather than exact text.
+    static func advice(for message: String) -> String? {
+        let text = message.lowercased()
+        func has(_ words: String...) -> Bool { words.allSatisfy { text.contains($0) } }
+        if has("wheel", "floor contact") || has("tilted") {
+            return "The robot was lifted or a wheel dropped, often on thick rugs, thresholds or stairs. Put it on a flat floor. A no-go zone can keep it off a rug it struggles with."
+        }
+        if has("stuck") || has("trapped") {
+            return text.contains("restrict") || text.contains("virtual")
+                ? "It ended up inside a no-go zone or wall. Move it out, then check the zones in Edit Floor Plan."
+                : "Free it and move it somewhere open, then start again."
+        }
+        if has("clean water", "empty") || has("water tank empty") { return "Refill the clean water tank, then dismiss this." }
+        if has("clean water", "not installed") || has("water tank missing") { return "Put the clean water tank back in." }
+        if has("wastewater") || has("dirty water") { return "Empty and refit the dirty water tank, and check its pipe isn't blocked." }
+        if has("tray") { return "Empty or refit the tray at the bottom of the dock." }
+        if has("dust bag") || has("dust duct") { return "Check the dock's dust bag and that its cover is closed." }
+        if has("dustbin full") { return "Empty the robot's dustbin." }
+        if has("dustbin missing") { return "Put the robot's dustbin back in." }
+        if has("brush", "jammed") { return "Clear hair or cables from the brush, then dismiss this." }
+        if has("cliff sensor") || has("sensor dirty") || has("wall sensor") || has("camera dirty") {
+            return "Wipe the sensors on the underside and front with a dry cloth."
+        }
+        if has("bumper") { return "Press the bumper gently all the way round until it moves freely." }
+        if has("filter jammed") { return "Take out the filter, clean it, and refit it." }
+        if has("navigate to the dock") || has("cannot reach target") {
+            return "Something blocks the way. Check for closed doors or objects, then send it again."
+        }
+        if has("charging station without power") || has("charging error") {
+            return "Check the dock is plugged in and its charging contacts are clean."
+        }
+        if has("mopping while on carpet") { return "Start mopping from a hard floor, or use a no-mop zone over the carpet." }
+        if has("mop pad") { return "Check the mop pads are fitted, or in the dock if the robot fits them itself." }
+        if has("low battery") { return "Let it charge on the dock." }
+        return nil
+    }
+
+    /// Dock supplies running out are chores rather than faults, and look it.
+    static func isDockChore(_ message: String) -> Bool {
+        let text = message.lowercased()
+        return ["water tank", "wastewater", "tray", "dust bag", "dustbin full"].contains { text.contains($0) }
+    }
+}
