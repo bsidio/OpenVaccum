@@ -6,6 +6,8 @@ A native iPhone app for robot vacuums running [Valetudo](https://valetudo.cloud)
 
 This is an unofficial app. It isn't affiliated with or endorsed by the Valetudo project.
 
+**Try the beta:** install it on your iPhone with [TestFlight](https://testflight.apple.com/join/NfSdKR9p).
+
 <p align="center">
   <img src="docs/screenshots/live.png" width="200" alt="Home, with the robot cleaning the kitchen on a live floor plan">
   <img src="docs/screenshots/3d.png" width="200" alt="The same floor plan as a 3D model">
